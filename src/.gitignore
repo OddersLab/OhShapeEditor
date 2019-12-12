@@ -25,6 +25,10 @@ ehthumbs.db
 *.unityproj
 *.booproj
 
+# Vs Code
+.vs
+.vs/*/**
+
 # Unity generated
 # ===============
 [Oo]bj/
@@ -36,8 +40,11 @@ sysinfo.txt
 # ==================
 Assets/UniversalMediaPlayer/*/**
 Assets/UniversalMediaPlayer
+
+# Other Files
+# ===========
 Library/*/**
 Library
 Assets/Scripts/UniversalMediaPlayer.cs
-Assets
-Assets/*/**
+Temp/*/**
+Temp
