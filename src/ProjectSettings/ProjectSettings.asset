@@ -558,7 +558,7 @@ PlayerSettings:
   webGLUseWasm: 0
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
-    1: UNIVERSAL_MEDIA_PLAYER
+    1: 
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}
