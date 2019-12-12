@@ -1,0 +1,332 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+public class DragSelectionHandler : MonoBehaviour/*, IBeginDragHandler, IDragHandler, IEndDragHandler */{
+
+    [SerializeField]
+    Image SelectionBoxImage;
+
+    public RectTransform Container;
+    Vector2 startPosition;
+    Rect selectionRect;
+
+    private Vector2 getScreenPointToLocalPointInRectangle(PointerEventData eventData)
+    {
+        Vector2 rectPosition;
+        Vector2 screenPoint;//  = Camera.main.WorldToViewportPoint(Input.mousePosition); // = // Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(Container, Input.mousePosition, eventData.enterEventCamera, out rectPosition);
+        Debug.Log("screenPoint: " + rectPosition + " | positionWorld: " + Input.mousePosition + " eventData.pointerCurrentRaycast.gameObject.GetComponent<RectTransform>()" + eventData.pointerCurrentRaycast.gameObject.name);
+        return rectPosition;
+    }
+
+    private Vector2 getScreenPointToLocalPointInRectangle(BaseEventData eventData)
+    {
+        Vector2 rectPosition;        
+        Vector2 screenPoint;//  = Camera.main.WorldToViewportPoint(Input.mousePosition); // = // Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(Container, Input.mousePosition, Container.GetComponentInParent<Canvas>().worldCamera, out rectPosition);
+        return rectPosition;
+    }
+
+    public void OnBeginDragg(BaseEventData eventData)
+    {
+        if (!Input.GetMouseButton(1)) return; // if Mouse button is not right
+
+        SelectionBoxImage.gameObject.SetActive(true);
+        WallObject.DeselectAll();
+        startPosition = getScreenPointToLocalPointInRectangle(eventData);
+        // startPosition = eventData.position;
+
+        Debug.Log("ON BEGIN" + startPosition);
+
+        selectionRect = new Rect();
+    }
+
+    public void OnDragg(BaseEventData eventData)
+    {
+        if (!Input.GetMouseButton(1)) return; // if Mouse button is not right
+
+
+        Rect container = Container.rect;
+        getScreenPointToLocalPointInRectangle(eventData);
+
+        Vector2 squareSize = new Vector2(Mathf.Abs(Input.mousePosition.x) - Mathf.Abs(startPosition.x), Mathf.Abs(Input.mousePosition.y) - Mathf.Abs(startPosition.y));
+        Vector2 newPosition = getScreenPointToLocalPointInRectangle(eventData);
+
+
+        // selectionRect.xMin = newPosition.x;
+        // selectionRect.yMin = newPosition.y;
+
+       
+        float x = getPositionInsideElement1D(newPosition.x, container.width);
+        float y = getPositionInsideElement1D(newPosition.y, container.height);
+
+        Vector2 endPosition = new Vector2(x, y);
+        endPosition = GetPosition(endPosition, container);
+
+        Vector2 centre = (startPosition + endPosition) / 2.0f;
+
+        SelectionBoxImage.rectTransform.localPosition = centre;// GetPosition(centre, container);
+
+        SelectionBoxImage.rectTransform.sizeDelta = new Vector2(Mathf.Abs(startPosition.x - endPosition.x), Mathf.Abs(startPosition.y - endPosition.y));
+    }
+
+    public void OnEndDragg(BaseEventData eventData)
+    {
+        
+        if (!SelectionBoxImage.gameObject.activeSelf) return; // if Mouse button is not right
+
+        SelectionBoxImage.gameObject.SetActive(false);
+
+        foreach (WallObject wallObject in WallObject.allMyWallObjects)
+        {
+            GameObject wall = wallObject.GetComponentInChildren<Toggle>().gameObject;
+            if (isObjectInsideDragBox(SelectionBoxImage.rectTransform, wall.transform.position, wall.GetComponent<RectTransform>().rect.size, Container.GetComponentInParent<Canvas>().worldCamera))
+            {
+                wallObject.OnDragSelect();
+            }
+        }
+    }
+
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right)
+        {
+            return;
+        }
+        SelectionBoxImage.gameObject.SetActive(true);
+        WallObject.DeselectAll();
+        startPosition = getScreenPointToLocalPointInRectangle(eventData);
+        // startPosition = eventData.position;
+
+        Debug.Log("ON BEGIN" + startPosition);
+
+        selectionRect = new Rect();
+    }
+
+
+
+
+    private float getPositionInsideElement1D(float position, float limit)
+    {
+        if (Mathf.Abs(position) >= limit)
+        {
+            return position < 0 ? -limit : limit;
+        }
+        return position;
+    }
+
+    public Vector2 GetPosition(Vector2 worldPosition, Rect container)
+    {
+        float x = getPositionInsideElement1D(worldPosition.x, container.width / 2);
+        float y = getPositionInsideElement1D(worldPosition.y, container.height / 2);
+        return new Vector2(x, y);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right)
+        {
+            Debug.Log("hola");
+            return;
+        }
+        Rect container = Container.rect;
+        getScreenPointToLocalPointInRectangle(eventData);
+        // Debug.Log("IS IN");
+        // Debug.Log(eventData.pointerCurrentRaycast.gameObject.name + " - " + eventData.pointerDrag.name); // eventData.pointerDrag.name es el bueno
+        // Debug.Log(eventData.pointerCurrentRaycast.worldPosition + " - " + eventData.pointerCurrentRaycast.screenPosition);
+        // eventData.position.
+        // Vector2 newPosition = getScreenPointToLocalPointInRectangle(eventData);
+
+        Vector2 squareSize = new Vector2(Mathf.Abs(eventData.position.x) - Mathf.Abs(startPosition.x), Mathf.Abs(eventData.position.y) - Mathf.Abs(startPosition.y));
+        Vector2 newPosition = getScreenPointToLocalPointInRectangle(eventData);
+        // eventData.position;
+        Debug.Log("WorldPosition: " + eventData.position + "(x,y): container [" + Container.gameObject.name + "] -> " + container.x + ", " + container.y + " pos: " + container.width + " - " +  container.height + " |||| xMin: " + container.xMin + " xMax: " + container.xMax + " yMin: " + container.yMin + " yMax: " + container.yMax + " @@@ " + Camera.main.ScreenToWorldPoint(container.position) + " --- ");
+        // Debug.Log("newPosition: " + newPosition + " | startPosition: " + startPosition + " | delta: " + eventData.delta + " | position: " + eventData.position + "sqr(size): --> " + squareSize);
+
+
+
+
+        /*if (newPosition.x < startPosition.x)
+        {
+            Debug.Log("1. newPosition: " + newPosition + " | -container.width / 2: " + -container.width / 2);
+            selectionRect.xMin = newPosition.x > -container.width / 2 ? newPosition.x : -container.width / 2;
+            selectionRect.xMax = startPosition.x;
+        }
+        else
+        {
+            Debug.Log("2. newPosition: " + newPosition + " | container.width / 2: " + container.width / 2);
+            selectionRect.xMin = startPosition.x;
+            selectionRect.xMax = newPosition.x < container.width / 2 ? newPosition.x : container.width / 2;
+        }
+
+        if (newPosition.y < startPosition.y)
+        {
+            //Debug.Log("< y");
+            Debug.Log("3. newPosition: " + newPosition + " | -container.height / 2: " + -container.height / 2);
+
+            selectionRect.yMin = newPosition.y > -container.height / 2 ? newPosition.y : -container.height / 2;
+            selectionRect.yMax = startPosition.y;
+        }
+        else
+        {
+            //Debug.Log("> y");
+
+            Debug.Log("4. newPosition: " + newPosition + " | container.height / 2: " + container.height / 2);
+
+            selectionRect.yMin = startPosition.y;
+            selectionRect.yMax = newPosition.y < container.height / 2 ? newPosition.y : container.height / 2;
+        }*/
+        
+        // Debug.Log("SelectionRect.Min: (" + selectionRect.xMin + ", " + selectionRect.yMin + ")");
+        // Debug.Log("SelectionRect.Max: (" + selectionRect.xMax + ", " + selectionRect.yMax + ")");
+
+        /*
+        selectionRect.xMin = -container.width / 2;
+        selectionRect.xMax = container.width / 2;
+
+        selectionRect.yMin = -container.height / 2;
+        selectionRect.yMax = container.height / 2;
+        */
+
+
+        // selectionRect.xMin = newPosition.x;
+        // selectionRect.yMin = newPosition.y;
+
+        // if (Mathf.Abs(selectionRect.min) > container.
+
+        // selectionBoxImage.rectTransform.position = new Vector2(selectionRect.x, selectionRect.y);
+
+        // SelectionBoxImage.rectTransform.offsetMin = selectionRect.min;
+        // SelectionBoxImage.rectTransform.offsetMax = selectionRect.max;
+
+        float x = getPositionInsideElement1D(newPosition.x, container.width);
+        float y = getPositionInsideElement1D(newPosition.y, container.height);
+
+        Vector2 endPosition = new Vector2(x, y);
+        endPosition = GetPosition(endPosition, container);
+
+        Vector2 centre = (startPosition + endPosition) / 2.0f;
+
+        // Debug.Log("Start: " + startPosition + "\nCentre: " + centre + "\nEnd: " + endPosition + "\nSizeDelta: " + new Vector2(Mathf.Abs(startPosition.x - endPosition.x), Mathf.Abs(startPosition.y - endPosition.y)));
+
+        //SelectionBoxImage.rectTransform.offsetMin = new Vector2(30, 30);
+        //SelectionBoxImage.rectTransform.offsetMax = new Vector2(30, 30);
+        SelectionBoxImage.rectTransform.localPosition = centre;// GetPosition(centre, container);
+        Debug.Log("Final --> (x, y): " + endPosition);
+        SelectionBoxImage.rectTransform.sizeDelta = new Vector2(Mathf.Abs(startPosition.x - endPosition.x), Mathf.Abs(startPosition.y - endPosition.y));
+
+        //selectionBoxImage.rectTransform.offsetMin += eventData.delta;
+    }
+
+    private bool getRectangleContainsScreenPoint(RectTransform rectTransform, Vector2 position, Camera camera) {
+        return RectTransformUtility.RectangleContainsScreenPoint(rectTransform, position, camera);
+    }
+
+    private bool isObjectInsideDragBox(RectTransform rectTransform, Vector2 position, Vector2 size, Camera camera)
+    {
+        return getRectangleContainsScreenPoint(rectTransform, position, camera)
+            || getRectangleContainsScreenPoint(rectTransform, new Vector2(position.x + size.x / 2, position.y + size.y / 2), camera)
+            || getRectangleContainsScreenPoint(rectTransform, new Vector2(position.x, position.y + size.y), camera)
+            || getRectangleContainsScreenPoint(rectTransform, new Vector2(position.x - size.x / 2, position.y + size.y), camera)
+            /* Corners */
+            || getRectangleContainsScreenPoint(rectTransform, new Vector2(position.x + size.x / 2, position.y + size.y), camera)
+            || getRectangleContainsScreenPoint(rectTransform, new Vector2(position.x + size.x / 2, position.y), camera)
+            || getRectangleContainsScreenPoint(rectTransform, new Vector2(position.x - size.x / 2, position.y + size.y), camera)
+            || getRectangleContainsScreenPoint(rectTransform, new Vector2(position.x - size.x / 2, position.y), camera);
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right)
+        {
+            return;
+        }
+        Debug.Log("EXIT" + WallObject.allMyWallObjects.Count);
+
+        SelectionBoxImage.gameObject.SetActive(false);
+        Debug.Log("SelectionRect position (x, y) " + SelectionBoxImage.rectTransform.rect.position + " | size: " + SelectionBoxImage.rectTransform.rect.size);
+
+        int i = 0;
+        foreach (WallObject wallObject in WallObject.allMyWallObjects)
+        {
+            if (i != -20)
+            {
+                GameObject wall = wallObject.GetComponentInChildren<Toggle>().gameObject;
+
+
+                /*Debug.Log("wall (" + wallObject.WallObjectId + ") --> " + wallObject.transform.localPosition + " | " + wallObject.transform.position);
+                if (SelectionBoxImage.rectTransform.rect.Contains(wallObject.transform.localPosition))
+                {
+                    Debug.Log("1Contains: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }
+
+                if (SelectionBoxImage.rectTransform.rect.Contains(wallObject.transform.position))
+                {
+                    Debug.Log("2Contains: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }
+                if (RectTransformUtility.RectangleContainsScreenPoint(SelectionBoxImage.rectTransform, wallObject.transform.position, eventData.enterEventCamera))
+                {
+                    Debug.Log("3Contains: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }
+                if (RectTransformUtility.RectangleContainsScreenPoint(SelectionBoxImage.rectTransform, wallObject.transform.localPosition, eventData.enterEventCamera))
+                {
+                    Debug.Log("4Contains: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }*/
+
+                /*Debug.Log("wall (" + wallObject.WallObjectId + ") --> " + wallObject.transform.localPosition + " | " + wallObject.transform.position);
+                if (SelectionBoxImage.rectTransform.rect.Contains(toggleTransform.localPosition))
+                {
+                    Debug.Log("1. ----------------------------------------------: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }*/
+
+                /*if (SelectionBoxImage.rectTransform.rect.Contains(toggleTransform.position))
+                {
+                    Debug.Log("2. ----------------------------------------------: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }*/
+                
+                if (isObjectInsideDragBox(SelectionBoxImage.rectTransform, wall.transform.position, wall.GetComponent<RectTransform>().rect.size, eventData.enterEventCamera))
+                {
+                    Debug.Log("3. ----------------------------------------------: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }
+
+                /*if (RectTransformUtility.RectangleContainsScreenPoint(SelectionBoxImage.rectTransform, toggleTransform.position, eventData.enterEventCamera))
+                {
+                    Debug.Log("3. ----------------------------------------------: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }*/
+
+
+                /*if (RectTransformUtility.RectangleContainsScreenPoint(SelectionBoxImage.rectTransform, toggleTransform.localPosition, eventData.enterEventCamera))
+                {
+                    Debug.Log("4. ----------------------------------------------: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }
+                Vector2 wallPosition;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(Container, toggleTransform.localPosition, eventData.enterEventCamera, out wallPosition);
+                Debug.Log("wallposition: " + wallPosition);
+                if (SelectionBoxImage.rectTransform.rect.Contains(wallPosition))
+                {
+                    Debug.Log("5. -----------------------------------------------: " + wallObject.WallObjectId);
+                    wallObject.OnDragSelect();
+                }*/
+            }
+            i++;
+
+        }
+
+        // throw new System.NotImplementedException();
+    }
+
+
+}
