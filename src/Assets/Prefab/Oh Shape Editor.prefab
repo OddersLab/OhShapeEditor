@@ -11673,7 +11673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1970360405784182
 GameObject:
   m_ObjectHideFlags: 1
@@ -15677,7 +15677,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: OhShape Editor v0.7.9
+  m_Text: OhShape Editor v1.0.0
 --- !u!114 &114106333570628708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -51852,7 +51852,7 @@ RectTransform:
   - {fileID: 224222016490103152}
   - {fileID: 224887428777855708}
   m_Father: {fileID: 224957464053405394}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -53395,7 +53395,7 @@ RectTransform:
   - {fileID: 224059615091940642}
   - {fileID: 224136434854902936}
   m_Father: {fileID: 224957464053405394}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -59742,7 +59742,7 @@ RectTransform:
   - {fileID: 224226675111299674}
   - {fileID: 224948444741686852}
   m_Father: {fileID: 224957464053405394}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -59926,9 +59926,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 224335385945379732}
   - {fileID: 224449995200668482}
   - {fileID: 224950228652466410}
-  - {fileID: 224335385945379732}
   m_Father: {fileID: 224194886265988478}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
