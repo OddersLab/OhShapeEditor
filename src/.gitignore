@@ -38,3 +38,6 @@ Assets/UniversalMediaPlayer/*/**
 Assets/UniversalMediaPlayer
 Library/*/**
 Library
+Assets/Scripts/UniversalMediaPlayer.cs
+Assets
+Assets/*/**
