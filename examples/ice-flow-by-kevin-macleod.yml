@@ -1,0 +1,354 @@
+%YAML 1.1
+---
+
+title: Ice Flow
+clip: ice-flow-by-kevin-macleod
+speed: 30
+
+video: ice-flow-by-kevin-macleod.mp4
+vOffset: 0.4899998
+
+forceDebug: False
+offset: 0
+
+author: Kevin MacLeod
+difficulty: medium
+preview: 6.8
+
+audioTime: 74
+
+levels:
+  - level: 0
+    sequence:
+
+      - second: 2.36
+        obj: CN.0.6
+        track: 0
+      - second: 2.59
+        obj: WP.C18CUC
+        track: 0
+      - second: 3.86
+        obj: CN.0.6
+        track: 0
+      - second: 4.29
+        obj: WP.C81CUC
+        track: 0
+      - second: 5.58
+        obj: CN.0.6
+        track: 0
+      - second: 6.01
+        obj: WP.C18CUC
+        track: 0
+      - second: 6.87
+        obj: CN.0.6
+        track: 0
+      - second: 7.72
+        obj: WP.C81CUC
+        track: 0
+      - second: 9.22
+        obj: WP.CAACUC
+        track: 0
+      - second: 10.09
+        obj: WP.C14CUC
+        track: 0
+      - second: 10.73
+        obj: WP.C41CUC
+        track: 0
+      - second: 11.15
+        obj: WH.CRU
+        track: 0
+      - second: 12.23
+        obj: WP.CA3CUC
+        track: 0
+      - second: 12.45
+        obj: WP.C3ACUC
+        track: 0
+      - second: 12.88
+        obj: WH.CBU
+        track: 0
+      - second: 13.73
+        obj: WA.L.30
+        track: 0
+      - second: 14.58
+        obj: WA.R.30
+        track: 0
+      - second: 15.44
+        obj: CN.4.6
+        track: 0
+      - second: 15.46
+        obj: CN.-4.6
+        track: 0
+      - second: 16.08
+        obj: CN.0.6
+        track: 0
+      - second: 16.30
+        obj: WP.C18CUC
+        track: 0
+      - second: 16.93
+        obj: WP.C11CUC
+        track: 0
+      - second: 17.58
+        obj: WP.C22CDC
+        track: 0
+      - second: 18.01
+        obj: WP.C33CDC
+        track: 0
+      - second: 18.44
+        obj: WP.C44CDC
+        track: 0
+      - second: 18.87
+        obj: WP.C55CDC
+        track: 0
+      - second: 19.30
+        obj: CN.-5.3
+        track: 0
+      - second: 19.53
+        obj: CN.5.3
+        track: 0
+      - second: 19.96
+        obj: CN.-5.6
+        track: 0
+      - second: 20.15
+        obj: CN.5.6
+        track: 0
+      - second: 20.58
+        obj: WP.R3ACUC
+        track: 0
+      - second: 21.43
+        obj: WP.CA3CUC
+        track: 0
+      - second: 22.29
+        obj: WP.R3ACUC
+        track: 0
+      - second: 23.16
+        obj: WP.CA3CUC
+        track: 0
+      - second: 23.80
+        obj: WH.CRU
+        track: 0
+      - second: 24.44
+        obj: WH.CLU
+        track: 0
+      - second: 24.89
+        obj: WP.C81CUC
+        track: 0
+      - second: 26.16
+        obj: WH.CRU
+        track: 0
+      - second: 26.80
+        obj: WH.CRU
+        track: 0
+      - second: 27.90
+        obj: WP.C13CUC
+        track: 0
+      - second: 28.30
+        obj: WP.C12CUC
+        track: 0
+      - second: 28.75
+        obj: WP.C13CUC
+        track: 0
+      - second: 29.16
+        obj: WP.C51CUC
+        track: 0
+      - second: 29.60
+        obj: WP.C41CUC
+        track: 0
+      - second: 30.02
+        obj: WP.C31CUC
+        track: 0
+      - second: 30.45
+        obj: WP.C21CUC
+        track: 0
+      - second: 30.66
+        obj: WP.C11CUC
+        track: 0
+      - second: 31.31
+        obj: WA.R.40
+        track: 0
+      - second: 31.74
+        obj: WA.U.30
+        track: 0
+      - second: 32.17
+        obj: WA.L.20
+        track: 0
+      - second: 32.59
+        obj: WP.R15CUC
+        track: 0
+      - second: 33.02
+        obj: WP.R14CUC
+        track: 0
+      - second: 33.66
+        obj: WP.R12CUC
+        track: 0
+      - second: 34.31
+        obj: WA.U.300
+        track: 0
+      - second: 34.75
+        obj: CN.3.3
+        track: 0
+      - second: 35.16
+        obj: CN.3.3
+        track: 0
+      - second: 35.60
+        obj: CN.-3.3
+        track: 0
+      - second: 36.02
+        obj: CN.-3.3
+        track: 0
+      - second: 36.46
+        obj: CN.3.3
+        track: 0
+      - second: 36.66
+        obj: CN.-3.3
+        track: 0
+      - second: 37.12
+        obj: CN.3.3
+        track: 0
+      - second: 37.31
+        obj: CN.-3.3
+        track: 0
+      - second: 38.16
+        obj: WH.CRU
+        track: 0
+      - second: 38.59
+        obj: WP.C51CUC
+        track: 0
+      - second: 39.02
+        obj: WH.CLU
+        track: 0
+      - second: 39.45
+        obj: WP.C15CUC
+        track: 0
+      - second: 39.88
+        obj: WH.CRU
+        track: 0
+      - second: 40.31
+        obj: WH.CLU
+        track: 0
+      - second: 41.16
+        obj: WP.C24CDC
+        track: 0
+      - second: 41.60
+        obj: WP.C33CDC
+        track: 0
+      - second: 42.01
+        obj: WP.C42CDC
+        track: 0
+      - second: 42.45
+        obj: WP.C52CDC
+        track: 0
+      - second: 42.88
+        obj: WP.C55CDC
+        track: 0
+      - second: 43.32
+        obj: CN.5.6
+        track: 0
+      - second: 43.52
+        obj: CN.-5.6
+        track: 0
+      - second: 43.98
+        obj: CN.5.6
+        track: 0
+      - second: 44.17
+        obj: CN.-5.6
+        track: 0
+      - second: 45.02
+        obj: WP.C15CUC
+        track: 0
+      - second: 45.45
+        obj: WP.C24CUC
+        track: 0
+      - second: 45.89
+        obj: WP.C33CUC
+        track: 0
+      - second: 46.31
+        obj: WP.C42CUC
+        track: 0
+      - second: 46.73
+        obj: WP.C51CUC
+        track: 0
+      - second: 48.02
+        obj: WP.C22CUC
+        track: 0
+      - second: 48.87
+        obj: WP.C33CUR
+        track: 0
+      - second: 49.74
+        obj: WP.R44CUC
+        track: 0
+      - second: 50.59
+        obj: WP.R33CUL
+        track: 0
+      - second: 51.46
+        obj: WP.C22CUC
+        track: 0
+      - second: 52.30
+        obj: WA.L.30
+        track: 0
+      - second: 53.17
+        obj: WA.R.30
+        track: 0
+      - second: 54.03
+        obj: CN.0.8
+        track: 0
+      - second: 54.88
+        obj: WA.LI.30
+        track: 0
+      - second: 55.74
+        obj: WA.RI.30
+        track: 0
+      - second: 56.81
+        obj: WA.U.150
+        track: 0
+      - second: 57.23
+        obj: CN.3.3
+        track: 0
+      - second: 57.48
+        obj: CN.-3.3
+        track: 0
+      - second: 58.75
+        obj: WP.CAACUC
+        track: 0
+      - second: 59.60
+        obj: WP.LA3CUC
+        track: 0
+      - second: 60.45
+        obj: WP.C3ACUC
+        track: 0
+      - second: 61.31
+        obj: WP.LA3CUC
+        track: 0
+      - second: 62.05
+        obj: WH.CBU
+        track: 0
+      - second: 62.59
+        obj: WP.C18CUC
+        track: 0
+      - second: 64.08
+        obj: CN.0.6
+        track: 0
+      - second: 64.28
+        obj: WP.C81CUC
+        track: 0
+      - second: 65.57
+        obj: CN.0.6
+        track: 0
+      - second: 66.00
+        obj: WP.C18CUC
+        track: 0
+      - second: 67.07
+        obj: CN.-3.6
+        track: 0
+      - second: 67.28
+        obj: CN.0.6
+        track: 0
+      - second: 67.71
+        obj: WP.C81CUC
+        track: 0
+      - second: 68.57
+        obj: CN.0.6
+        track: 0
+      - second: 69.42
+        obj: WP.C18CUC
+        track: 0
+...
