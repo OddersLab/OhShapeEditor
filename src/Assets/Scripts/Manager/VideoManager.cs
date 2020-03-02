@@ -59,7 +59,7 @@ public class VideoManager : MonoBehaviour
     {
         if (_player == null) return;
         _videoFilename = videoFilename;
-        var file = FileManager.Path + _videoFilename;
+        string file = FileManager.VideoPath + _videoFilename;
 
         if (!File.Exists(file))
         {
@@ -69,7 +69,7 @@ public class VideoManager : MonoBehaviour
 
         ShowVideoManager(true);
 
-        _player.Path = Path.GetFullPath(FileManager.Path + _videoFilename);
+        _player.Path = Path.GetFullPath(FileManager.VideoPath + _videoFilename);
 
         Mute();
         Play();

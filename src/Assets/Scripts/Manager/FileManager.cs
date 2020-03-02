@@ -10,7 +10,9 @@ public static class FileManager
     #region static references
 
     //Variables
-    public static string Path; // const "Songs\\"
+    public static string Path = ""; // const "Songs\\"
+    public static string AudioPath = ""; // const "Songs\\"
+    public static string VideoPath = ""; // const "Songs\\"
     public const string ymlExtension = ".yml";
     public const string videoExtension = ".mp4";
     public const string audioExtension = ".ogg";
@@ -31,7 +33,7 @@ public static class FileManager
     //New file
     public static bool CreateFile(string name)
     {
-		
+		/*
 		if (!Directory.Exists(Path))
             Directory.CreateDirectory(Path);
 
@@ -50,7 +52,7 @@ public static class FileManager
 			DialogsWindowsManager.Instance.InfoMessage(name + "\nalready exists.");
 			return false;
         }
-
+        */
         string songYaml =
          "%YAML 1.1\n" +
          "---\n" +
@@ -60,10 +62,10 @@ public static class FileManager
          "difficulty: easy\n" +
          "preview: 0\n";
 
-
-        var sr = File.CreateText(file);
-        sr.WriteLine(songYaml, name, "Load Clip", 20);
-        sr.Close();
+        Debug.Log(Path + CurrentFilename + ymlExtension);
+        StreamWriter streamWriter = File.CreateText(Path + CurrentFilename + ymlExtension);
+        streamWriter.WriteLine(songYaml, name, "Load Clip", 20);
+        streamWriter.Close();
         return true;
     }
 
@@ -229,10 +231,39 @@ public static class FileManager
 
     private static void SetPath(string newPath)
     {
+        Debug.Log("Path" + newPath);
         if (!newPath.EndsWith("/"))
             Path = (newPath + "\\").Replace("\\", "/");
 
         Path = Path.Replace("\\", "/");
+        //if (VideoPath.Equals(""))
+        //{
+            setVideoPath(newPath);
+        //}
+        //if (AudioPath.Equals(""))
+        //{
+            setAudioPath(newPath);
+        //}
+    }
+
+    private static void setAudioPath(string newPath)
+    {
+        Debug.Log("AuPath" + newPath);
+
+        if (!newPath.EndsWith("/"))
+            AudioPath = (newPath + "\\").Replace("\\", "/");
+
+        AudioPath = AudioPath.Replace("\\", "/");
+    }
+
+    private static void setVideoPath(string newPath)
+    {
+        Debug.Log("ViPath" + newPath);
+
+        if (!newPath.EndsWith("/"))
+            VideoPath = (newPath + "\\").Replace("\\", "/");
+
+        VideoPath = VideoPath.Replace("\\", "/");
     }
 
     #endregion
@@ -250,12 +281,24 @@ public static class FileManager
     //[UnityEditor.MenuItem("OhShape/Test OpenFileDialog")]
 	public static bool OpenDialog(string filter)
     {
-        var state = false;
+        bool state = false;
 
         OpenFileDialog openDialog = new OpenFileDialog();
 
         //Open in this directory
-        openDialog.InitialDirectory = Path;
+        if (filter.Contains(".ogg"))
+        {
+            openDialog.InitialDirectory = AudioPath;
+        }
+        else if (filter.Contains(".mp4;*.MOV"))
+        {
+            openDialog.InitialDirectory = VideoPath;
+        }
+        else
+        {
+            openDialog.InitialDirectory = Path;
+        }
+
         openDialog.RestoreDirectory = true;
         //Extension filters
         openDialog.Filter = filter;
@@ -267,17 +310,20 @@ public static class FileManager
         if (result == DialogResult.OK)
         {
 			var filePath = openDialog.FileName;
-			SetPath(System.IO.Path.GetDirectoryName(filePath));
+			// SetPath(System.IO.Path.GetDirectoryName(filePath));
 			var fileName = System.IO.Path.GetFileName(filePath);
 
 			// TODO fix this
 			if (filter.Contains(".ogg")) {
 				FileManager.CurrentAudioClipFilename = fileName;
+                setAudioPath(System.IO.Path.GetDirectoryName(filePath));
 			} else if (filter.Contains(".mp4;*.MOV")) {
 				FileManager.CurrentVideoFilename = fileName;
+                setVideoPath(System.IO.Path.GetDirectoryName(filePath));
 			} else {
 				FileManager.SetFilename(filePath);
-			}
+                SetPath(System.IO.Path.GetDirectoryName(filePath));
+            }
 
             //Get the path of specified file
             Debug.Log("File Path:" + filePath);
@@ -292,12 +338,12 @@ public static class FileManager
     //[UnityEditor.MenuItem("OhShape/Test SaveFileDialog")]
     public static bool SaveDialog()
     {
-        var state = false;
+        bool state = false;
 
         SaveFileDialog saveDialog = new SaveFileDialog();
 
         // or overwrite the file if it does exist.
-        saveDialog.CreatePrompt = true;//Create the file if it doesn't exist 
+        saveDialog.CreatePrompt = true;    //Create the file if it doesn't exist 
         saveDialog.OverwritePrompt = true;
 
         // Set the file name to SongName, set the type filter
@@ -317,10 +363,50 @@ public static class FileManager
 
         if (result == DialogResult.OK)
         {
-            var filePath = saveDialog.FileName;
+            string filePath = saveDialog.FileName;
 
             SetPath(System.IO.Path.GetDirectoryName(filePath));
 			FileManager.SetFilename(filePath);
+
+            state = true;
+        }
+        return state;
+    }
+
+    //Save File Dialog.
+    //[UnityEditor.MenuItem("OhShape/Test SaveFileDialog")]
+    public static bool NewDialog()
+    {
+        bool state = false;
+
+        SaveFileDialog saveDialog = new SaveFileDialog();
+
+        // or overwrite the file if it does exist.
+        saveDialog.CreatePrompt = false;    //Create the file if it doesn't exist 
+        saveDialog.OverwritePrompt = true;
+
+        // Set the file name to SongName, set the type filter
+        // to yml files, and set the initial directory to the 
+        // MyDocuments folder.
+        saveDialog.FileName = CurrentFilename;
+        // DefaultExt is only used when "All files" is selected from 
+        // the filter box and no extension is specified by the user.
+        saveDialog.DefaultExt = "yml";
+        saveDialog.Filter =
+            "Text files (*.yml)|*.yml";
+        saveDialog.InitialDirectory = Path;
+
+        // Call ShowDialog and check for a return value of DialogResult.OK,
+        // which indicates that the file was saved. 
+        DialogResult result = saveDialog.ShowDialog();
+
+        if (result == DialogResult.OK)
+        {
+            string filePath = saveDialog.FileName;
+
+            SetPath(System.IO.Path.GetDirectoryName(filePath));
+            FileManager.SetFilename(filePath);
+            CreateFile(CurrentFilename);
 
             state = true;
         }

@@ -68,8 +68,9 @@ public class AudioManager : MonoBehaviour
         else
         {
             Log.AddLine(string.Format("File {0} no exist.", name));                       
-            ClipInfo.Clip = _source.clip = null; ;
+            ClipInfo.Clip = _source.clip = null;
             ClipInfo.ClipTimeSize = 0;
+            DialogsWindowsManager.Instance.InfoMessage("Audio Clip Not Exists");
         }
     }
 

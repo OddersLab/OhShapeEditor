@@ -21,7 +21,7 @@ public class TimeGridManager : MonoBehaviour
 
 
 	private List<RectTransform> _gridLines = new List<RectTransform>();
-    private int _bpm = 0;
+    private float _bpm = 0;
     private float _offset = 0.00f;
     private Boolean _showGridLines = true;
 	
@@ -39,7 +39,7 @@ public class TimeGridManager : MonoBehaviour
 		}
 	}
 
-    public void Setup(Boolean showGridLines, int bpm, float offset)
+    public void Setup(Boolean showGridLines, float bpm, float offset)
     {
         _showGridLines = showGridLines; 
         _bpm = bpm;
@@ -63,10 +63,11 @@ public class TimeGridManager : MonoBehaviour
 
 	private void CreateGridObjects()
 	{
-		float clipTimeSizeInMinutes = ClipInfo.ClipTimeSize / 60;
-		int numberOfLines = (int)clipTimeSizeInMinutes * _bpm;
-		for (int i = 0 ; i <= numberOfLines ; i ++) {
-			float time = ClipInfo.ClipTimeSize / numberOfLines * i + _offset;
+        // float clipTimeSizeInMinutes = ClipInfo.ClipTimeSize / 60;
+        float numberOfLines = ClipInfo.ClipTimeSize * (_bpm / 60);
+
+        for (int i = 0; i <= (int)numberOfLines; i++) {
+            float time = ClipInfo.ClipTimeSize / numberOfLines * i + _offset;
 			time = (float)Math.Round(time, 2);
 			float pos = ClipInfo.SecToPixel(time);
 
@@ -78,10 +79,10 @@ public class TimeGridManager : MonoBehaviour
 			rectTransform.gameObject.SetActive(_showGridLines);
 			_gridLines.Add (rectTransform);
 		}
-	}
+    }
 
 
-	public void ChangeGridOffset(float offset)
+    public void ChangeGridOffset(float offset)
 	{
 		float clipTimeSizeInMinutes = ClipInfo.ClipTimeSize / 60;
 		_offset = offset;
@@ -107,7 +108,7 @@ public class TimeGridManager : MonoBehaviour
         }
     }
 
-	public void ChangeGridBPM(int bpm)
+	public void ChangeGridBPM(float bpm)
 	{
 		DeleteGridObjects();
         _bpm = bpm;

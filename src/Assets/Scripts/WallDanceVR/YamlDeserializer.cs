@@ -39,7 +39,7 @@ public class DeserializedSong
 	public string Genere     { get; set; }
     public float AudioTime { get; set; }
     public bool Grid { get; set; }
-    public int GridBpm { get; set; }
+    public float GridBpm { get; set; }
     public float GridOffset { get; set; }
 
 

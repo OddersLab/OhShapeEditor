@@ -31,8 +31,8 @@ public class OhShapeEditor : MonoBehaviour
     public RectTransform WaveWalls;
     public ScrollRect SongScrollBar;
     public Toggle GridToggle;
-    public Text GridOffsetInputText;
-    public Text GridBPMInputText;
+    public InputField GridOffsetInputText;
+    public InputField GridBPMInputText;
     public InputField Volume;
     public InputField Zoom;
 
@@ -79,7 +79,7 @@ public class OhShapeEditor : MonoBehaviour
     #endregion
 
     #region Flags
-    
+
     private int _moveWallsVerticallyInTheNextFrame = 0;
 
 
@@ -220,8 +220,8 @@ public class OhShapeEditor : MonoBehaviour
             }
         }
 
-       if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-       {
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+        {
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
                 if (Input.GetKeyDown(KeyCode.S)) {
@@ -242,7 +242,7 @@ public class OhShapeEditor : MonoBehaviour
             {
                 OnSave();
             }
-       }
+        }
 
         if (Input.GetKeyDown(KeyCode.Delete))
         {
@@ -266,18 +266,6 @@ public class OhShapeEditor : MonoBehaviour
     #endregion
 
     #region Modal Windows
-
-    public void CreateNewFile(Text textInputField)
-    {
-        if (FileManager.CreateFile(textInputField.text))
-        {
-            //Load recent created file.
-            DialogsWindowsManager.Instance.HideWindows();
-            // ResetEditor();
-
-            StartCoroutine(LoadSong(FileManager.CurrentFilename));
-        }
-    }
 
     public void SetVideoFileToLoad(string text)
     {
@@ -331,7 +319,10 @@ public class OhShapeEditor : MonoBehaviour
 
     public void OnNewSong()
     {
-        DialogsWindowsManager.Instance.ShowWindow(DialogsWindowsManager.Window.NewFile);
+        if (FileManager.NewDialog())
+        {
+            StartCoroutine(LoadSong(FileManager.CurrentFilename, true));
+        }
     }
 
     public void OnLoadFile(string filter)
@@ -591,7 +582,7 @@ public class OhShapeEditor : MonoBehaviour
             }
 
             float diffTime = draggedWallTime - wallObject.Time;
-            
+
             foreach (WallObject selectedWallObject in _selectedWallObjects)
             {
                 float wallTime = selectedWallObject.Time + diffTime;
@@ -832,8 +823,8 @@ public class OhShapeEditor : MonoBehaviour
 
     public void OnGridBPMChange(string bpm)
     {
-        _timeGridManager.ChangeGridBPM(Int32.Parse(bpm));
-        _songManager.CurrentSong.GridBpm = Int32.Parse(bpm);
+        _timeGridManager.ChangeGridBPM(float.Parse(bpm));
+        _songManager.CurrentSong.GridBpm = float.Parse(bpm);
     }
 
     public void OnGridOffsetChange(string offset)
@@ -841,10 +832,24 @@ public class OhShapeEditor : MonoBehaviour
         _timeGridManager.ChangeGridOffset(float.Parse(offset));
         _songManager.CurrentSong.GridOffset = float.Parse(offset);
     }
-    
+
     public void OnSnapChange(Boolean isActive)
     {
         _timeGridManager.Snap = isActive;
+    }
+
+    public void OnGridBPMChange(float bpmOffset)
+    {
+        string newOffset = (float.Parse(GridBPMInputText.text) + bpmOffset).ToString("0.00");
+        GridBPMInputText.text = newOffset;
+        OnGridBPMChange(newOffset);
+    }
+
+    public void OnGridOffsetChange(float offset)
+    {
+        string newOffset = (float.Parse(GridOffsetInputText.text) + offset).ToString("0.00");
+        GridOffsetInputText.text = newOffset;
+        OnGridOffsetChange(newOffset);
     }
 
     #endregion
@@ -1204,7 +1209,7 @@ public class OhShapeEditor : MonoBehaviour
     private IEnumerator LoadClipRoutine()
     {
         var clipName = FileManager.CurrentAudioClipFilename;
-        yield return _audioManager.LoadClipRoutine(FileManager.Path + clipName);
+        yield return _audioManager.LoadClipRoutine(FileManager.AudioPath + clipName);
         if (_songManager.CurrentSong != null)
         {
             _songManager.CurrentSong.Clip = FileManager.GetFileNameWithoutExtension(clipName);
@@ -1216,17 +1221,23 @@ public class OhShapeEditor : MonoBehaviour
         RenderWave();
     }
 
-    private IEnumerator LoadSong(string fileName)
+    private IEnumerator LoadSong(string fileName, bool newSong = false)
     {
         ResetEditor();
-
         _songManager.DesealizeSong(fileName);
 
         _propertiesManager.SetSongProperites(_songManager.CurrentSong);
 
         NotStartedBackground.SetActive(false);
 
-        yield return _audioManager.LoadClipRoutine(FileManager.Path + _songManager.CurrentSong.Clip + FileManager.audioExtension);
+        if (newSong) yield break;
+
+        yield return _audioManager.LoadClipRoutine(FileManager.AudioPath + _songManager.CurrentSong.Clip + FileManager.audioExtension);
+
+        if (!ClipInfo.Clip)
+        {
+            yield break;
+        }
 
         _renderSong.MakeLevelBuffers(1);
         RenderWave();
