@@ -62,6 +62,14 @@ Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 - [OhShape Instagram]
 
 ## 🔧 Release notes
+### 1.0.2
+- Fix bug in the GridLines
+
+### 1.0.1
+- Fix bug where sometimes, more than one .yml file was created for the same song.
+- Add buttons to increase and decrease the Grid Offset and the Grid BPM.
+- Grid BPM now accepts two decimal digits.
+
 ### 1.0.0
 - Add the option to snap walls to the Grid.  
 - Change icons for fullscreen/normalscreen and make window on normalscreen resizable.  

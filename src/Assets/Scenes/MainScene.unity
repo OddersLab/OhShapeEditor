@@ -998,7 +998,7 @@ Prefab:
     - target: {fileID: 224144289589432748, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00004196167
+      value: 0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 224772708461232372, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
@@ -1517,7 +1517,7 @@ Prefab:
     - target: {fileID: 114105122365015998, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_Text
-      value: OhShape Editor v1.0.1
+      value: OhShape Editor v1.0.2
       objectReference: {fileID: 0}
     - target: {fileID: 224903936257072738, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}

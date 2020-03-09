@@ -21,7 +21,7 @@ public class TimeGridManager : MonoBehaviour
 
 
 	private List<RectTransform> _gridLines = new List<RectTransform>();
-    private float _bpm = 0;
+    private float _bpm = 0.00f;
     private float _offset = 0.00f;
     private Boolean _showGridLines = true;
 	
@@ -46,7 +46,7 @@ public class TimeGridManager : MonoBehaviour
         _offset = offset;
 
         EnableGrid.isOn = showGridLines;
-        GridBpmValue.text = bpm.ToString();
+        GridBpmValue.text = bpm.ToString("F2");
         GridOffset.text = offset.ToString("F2");
 
         LoadGridObjects();
@@ -63,17 +63,18 @@ public class TimeGridManager : MonoBehaviour
 
 	private void CreateGridObjects()
 	{
-        // float clipTimeSizeInMinutes = ClipInfo.ClipTimeSize / 60;
-        float numberOfLines = ClipInfo.ClipTimeSize * (_bpm / 60);
+		float quarternote = 60 / _bpm;
+		float numberOfLines = (int)(ClipInfo.ClipTimeSize * (_bpm / 60));
 
-        for (int i = 0; i <= (int)numberOfLines; i++) {
-            float time = ClipInfo.ClipTimeSize / numberOfLines * i + _offset;
+        for (int i = 0; i <= numberOfLines; i++)
+		{
+            float time = quarternote * i + _offset;
 			time = (float)Math.Round(time, 2);
 			float pos = ClipInfo.SecToPixel(time);
 
 			GameObject timeGridLine = CreateGridBarObject (time.ToString("F2"));
 
-			RectTransform rectTransform = timeGridLine.GetComponent<RectTransform> ();
+			RectTransform rectTransform = timeGridLine.GetComponent<RectTransform>();
 
             SetPosition(rectTransform, pos);
 			rectTransform.gameObject.SetActive(_showGridLines);
@@ -84,18 +85,9 @@ public class TimeGridManager : MonoBehaviour
 
     public void ChangeGridOffset(float offset)
 	{
-		float clipTimeSizeInMinutes = ClipInfo.ClipTimeSize / 60;
+		DeleteGridObjects();
 		_offset = offset;
-		float width = BarsParent.GetComponent<RectTransform> ().rect.width;
-
-		for (int i = 0 ; i < _gridLines.Count ; i ++) {
-			float time = ClipInfo.ClipTimeSize / _gridLines.Count * i + offset;
-			time = (float)Math.Round(time, 2);
-			float pos = ClipInfo.SecToPixel(time);
-
-			_gridLines[i].name = time.ToString("F2");
-			SetPosition(_gridLines[i], pos);
-		}
+		CreateGridObjects();
 	}
 
     public void SetGridVisible(Boolean isVisible)
