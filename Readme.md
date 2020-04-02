@@ -63,7 +63,7 @@ Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 
 ## 🔧 Release notes
 ### 1.0.3
-- Add beginner mode
+- Added beginner mode
 - Changing difficulty will change the speed of the song
 
 ### 1.0.2
