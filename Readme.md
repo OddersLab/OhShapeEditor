@@ -62,6 +62,10 @@ Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 - [OhShape Instagram]
 
 ## 🔧 Release notes
+### 1.0.3
+- Add beginner mode
+- Changing difficulty will change the speed of the song
+
 ### 1.0.2
 - Fix bug in the GridLines
 

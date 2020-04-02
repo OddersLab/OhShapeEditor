@@ -92,6 +92,7 @@ public class PropertiesManager : MonoBehaviour
 
     public void UpdateSpeedTitle(string speed)
     {
+		Debug.Log(_currentSong.Difficulty);
         SetUpPropertyInput(_speed, speed);
     }
 
@@ -106,12 +107,12 @@ public class PropertiesManager : MonoBehaviour
 		SongTitle.text = FileManager.CurrentFilename + FileManager.CurrentFilenameExtension;
 
         _currentSong.Title = GetPropertyInput(_songTitle);
-        _currentSong.Speed = Int32.Parse(GetPropertyInput(_speed));
+		_currentSong.Difficulty = GetUpPropertyDifficulty();
+		_currentSong.Speed = Int32.Parse(GetPropertyInput(_speed));
 		_currentSong.Clip = GetPropertyText(_audio);
 		_currentSong.Offset = float.Parse(GetPropertyInput(_offset));
         _currentSong.Author = GetPropertyInput(_author);
         _currentSong.Preview = float.Parse(GetPropertyInput(_preview));
-        _currentSong.Difficulty = GetUpPropertyDifficulty(_difficulty);
 		_currentSong.ForceDebug = GetPropertyDebugMode(_debugMode);
     }
 
@@ -131,32 +132,39 @@ public class PropertiesManager : MonoBehaviour
         SongProperties.gameObject.SetActive(true);
 
 		SongTitle.text = FileManager.CurrentFilename + FileManager.CurrentFilenameExtension;
-        SetUpPropertyInput(_songTitle, _currentSong.Title);
-        SetUpPropertyInput(_speed, _currentSong.Speed.ToString());
 		// TODO change to not set .ogg manually
-		var currentSong = _currentSong.Clip;
+		string currentSong = _currentSong.Clip;
 		if (!_currentSong.Clip.Contains(".ogg")) {
 			currentSong += ".ogg";
 		}
+
+		string speed = _currentSong.Speed.ToString();
+
         SetUpPropertyText(_audio, currentSong); 
         SetUpPropertyInput(_offset, _currentSong.Offset.ToString());
         SetUpPropertyInput(_author, _currentSong.Author);
         SetUpPropertyInput(_preview, _currentSong.Preview.ToString());
         SetUpPropertyDifficulty(_difficulty, _currentSong.Difficulty);
 		SetUpPropertyDebugMode(_debugMode, _currentSong.ForceDebug);
+		SetUpPropertyInput(_songTitle, _currentSong.Title);
+		SetUpPropertyInput(_speed, speed);
+	}
 
-    }
-
-    public void UpdateClipTime(string time)
+	public void UpdateClipTime(string time)
     {
         CurrentCliptime.text = time + " s";
     }
 
-    #endregion
+	public void SetUpPropertyDifficulty(int state)
+	{
+		SetUpPropertyDifficulty(_difficulty, GetUpPropertyDifficulty(state));
+	}
 
-    #region Setup properties
+	#endregion
 
-    private void SetUpPropertyInput(GameObject template, string value)
+	#region Setup properties
+
+	private void SetUpPropertyInput(GameObject template, string value)
     {
         template.GetComponentInChildren<InputField>().text = value;
     }
@@ -184,17 +192,33 @@ public class PropertiesManager : MonoBehaviour
 
     private void SetUpPropertyDifficulty(GameObject template, string state)
     {
-        var v = 0;
+        int difficulty = 0;
         switch (state.ToLower())
         {
-            case "medium":
-                v = 1;
-                break;
-            case "hard":
-                v = 2;
-                break;
-        }
-        template.GetComponentInChildren<Dropdown>().value = v;
+			case "beginner":
+				difficulty = 0;
+				_currentSong.Speed = 15;
+				_currentSong.Difficulty = state.ToLower();
+				break;
+			case "easy":
+				difficulty = 1;
+				_currentSong.Speed = 20;
+				_currentSong.Difficulty = state.ToLower();
+				break;
+			case "medium":
+				difficulty = 2;
+				_currentSong.Speed = 30;
+				_currentSong.Difficulty = state.ToLower();
+				break;
+			case "hard":
+				difficulty = 3;
+				_currentSong.Speed = 40;
+				_currentSong.Difficulty = state.ToLower();
+				break;
+		}
+
+		SetUpPropertyInput(_speed, _currentSong.Speed.ToString());
+		template.GetComponentInChildren<Dropdown>().value = difficulty;
     }
     #endregion
 
@@ -220,23 +244,34 @@ public class PropertiesManager : MonoBehaviour
         return template.GetComponentInChildren<Toggle>().isOn;
     }
 
-    private string GetUpPropertyDifficulty(GameObject template)
+    private string GetUpPropertyDifficulty()
     {
-        string difficulty = "easy";
-        var dropDownValue = template.GetComponentInChildren<Dropdown>().value;
-
-        switch (dropDownValue)
-        {
-            case 1:
-                difficulty = "medium";
-                break;
-            case 2:
-                difficulty = "hard";
-                break;
-        }
-
-        return difficulty;
+		int dropDownValue = _difficulty.GetComponentInChildren<Dropdown>().value;
+		return GetUpPropertyDifficulty(dropDownValue);
     }
 
-    #endregion
+	private string GetUpPropertyDifficulty(int state)
+	{
+		string difficulty = "easy";
+
+		switch (state)
+		{
+			case 0:
+				difficulty = "beginner";
+				break;
+			case 1:
+				difficulty = "easy";
+				break;
+			case 2:
+				difficulty = "medium";
+				break;
+			case 3:
+				difficulty = "hard";
+				break;
+		}
+
+		return difficulty;
+	}
+
+	#endregion
 }
