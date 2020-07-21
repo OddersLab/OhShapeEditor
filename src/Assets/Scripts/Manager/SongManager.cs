@@ -43,24 +43,25 @@ public class SongManager : MonoBehaviour
             "title: {0}\n" +
             "clip: {1}\n" +
             "speed: {2}\n" +
-            "audioTime: {3}\n\n";
+            "audioTime: {3}\n" +
+            "scenary: {4}\n\n";
 
-        songYaml += "video: {4}\n" +
-            "vOffset: {5}\n\n";
+        songYaml += "video: {5}\n" +
+            "vOffset: {6}\n\n";
 
-        songYaml += "forceDebug: {6}\n" +
-            "offset: {7}\n\n";
+        songYaml += "forceDebug: {7}\n" +
+            "offset: {8}\n\n";
 
-        songYaml += "author: {8}\n" +
-            "difficulty: {9}\n" +
-            "preview: {10}\n\n";
+        songYaml += "author: {9}\n" +
+            "difficulty: {10}\n" +
+            "preview: {11}\n\n";
 
-        songYaml += "grid: {11}\n" +
-            "gridBpm: {12}\n" +
-            "gridOffset: {13}\n\n\n";
+        songYaml += "grid: {12}\n" +
+            "gridBpm: {13}\n" +
+            "gridOffset: {14}\n\n\n";
 
 
-        string songHead = string.Format(songYaml, CurrentSong.Title, CurrentSong.Clip.Replace(".ogg", ""), CurrentSong.Speed, CurrentSong.AudioTime,
+        string songHead = string.Format(songYaml, CurrentSong.Title, CurrentSong.Clip.Replace(".ogg", ""), CurrentSong.Speed, CurrentSong.AudioTime, CurrentSong.Scenary,
             CurrentSong.Video, CurrentSong.VOffset,
             CurrentSong.ForceDebug, CurrentSong.Offset,
             CurrentSong.Author, CurrentSong.Difficulty, CurrentSong.Preview,

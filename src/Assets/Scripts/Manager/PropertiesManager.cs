@@ -25,6 +25,7 @@ public class PropertiesManager : MonoBehaviour
     private GameObject _author;
     private GameObject _preview;
     private GameObject _difficulty;
+    private GameObject _scenary;
 	private GameObject _debugMode;
 
 	#endregion
@@ -53,7 +54,8 @@ public class PropertiesManager : MonoBehaviour
         _preview = songContent.Find("Preview").gameObject;
         _speed = songContent.Find("Speed/Input").gameObject;
         _offset = songContent.Find("Offset").gameObject;
-        
+        _scenary = songContent.Find("Scenary").gameObject;
+
         _audio = songContent.Find("AudioFile/Audio").gameObject;
 
         
@@ -87,33 +89,33 @@ public class PropertiesManager : MonoBehaviour
 
     public void UpdateSpeedSliderTitle(float speed)
     {
-        SetUpPropertySlider(_speed, (int)speed);
+        setUpPropertySlider(_speed, (int)speed);
     }
 
     public void UpdateSpeedTitle(string speed)
     {
-		Debug.Log(_currentSong.Difficulty);
-        SetUpPropertyInput(_speed, speed);
+        setUpPropertyInput(_speed, speed);
     }
 
     public void UpdateSpeedTitle(int speed)
     {
         int currentSpeed = Int32.Parse(_speed.GetComponentInChildren<InputField>().text);
-        SetUpPropertyInput(_speed, (currentSpeed + speed).ToString());
+        setUpPropertyInput(_speed, (currentSpeed + speed).ToString());
     }
 
     public void UpdateCurrentSong()
     {
 		SongTitle.text = FileManager.CurrentFilename + FileManager.CurrentFilenameExtension;
 
-        _currentSong.Title = GetPropertyInput(_songTitle);
-		_currentSong.Difficulty = GetUpPropertyDifficulty();
-		_currentSong.Speed = Int32.Parse(GetPropertyInput(_speed));
-		_currentSong.Clip = GetPropertyText(_audio);
-		_currentSong.Offset = float.Parse(GetPropertyInput(_offset));
-        _currentSong.Author = GetPropertyInput(_author);
-        _currentSong.Preview = float.Parse(GetPropertyInput(_preview));
-		_currentSong.ForceDebug = GetPropertyDebugMode(_debugMode);
+        _currentSong.Title = getPropertyInput(_songTitle);
+		_currentSong.Difficulty = getUpPropertyDifficulty();
+		_currentSong.Speed = Int32.Parse(getPropertyInput(_speed));
+        _currentSong.Scenary = Int32.Parse(getUpPropertyScenary());
+		_currentSong.Clip = getPropertyText(_audio);
+		_currentSong.Offset = float.Parse(getPropertyInput(_offset));
+        _currentSong.Author = getPropertyInput(_author);
+        _currentSong.Preview = float.Parse(getPropertyInput(_preview));
+		_currentSong.ForceDebug = getPropertyDebugMode(_debugMode);
     }
 
     public void UpdateUIWallObjectProperties(string id, float time)
@@ -122,8 +124,8 @@ public class PropertiesManager : MonoBehaviour
         SongProperties.gameObject.SetActive(false);
         WallObjectProperties.gameObject.SetActive(true);
         */
-        SetUpPropertyInput(_wallObjectId, id);
-        SetUpPropertyInput(_time, time.ToString());
+        setUpPropertyInput(_wallObjectId, id);
+        setUpPropertyInput(_time, time.ToString());
 	}
 
     public void UpdateUISongProperties()
@@ -140,14 +142,15 @@ public class PropertiesManager : MonoBehaviour
 
 		string speed = _currentSong.Speed.ToString();
 
-        SetUpPropertyText(_audio, currentSong); 
-        SetUpPropertyInput(_offset, _currentSong.Offset.ToString());
-        SetUpPropertyInput(_author, _currentSong.Author);
-        SetUpPropertyInput(_preview, _currentSong.Preview.ToString());
-        SetUpPropertyDifficulty(_difficulty, _currentSong.Difficulty);
-		SetUpPropertyDebugMode(_debugMode, _currentSong.ForceDebug);
-		SetUpPropertyInput(_songTitle, _currentSong.Title);
-		SetUpPropertyInput(_speed, speed);
+        setUpPropertyText(_audio, currentSong); 
+        setUpPropertyInput(_offset, _currentSong.Offset.ToString());
+        setUpPropertyInput(_author, _currentSong.Author);
+        setUpPropertyInput(_preview, _currentSong.Preview.ToString());
+        setUpPropertyDifficulty(_difficulty, _currentSong.Difficulty);
+        setUpPropertyScenary(_scenary, _currentSong.Scenary);
+		setUpPropertyDebugMode(_debugMode, _currentSong.ForceDebug);
+		setUpPropertyInput(_songTitle, _currentSong.Title);
+		setUpPropertyInput(_speed, speed);
 	}
 
 	public void UpdateClipTime(string time)
@@ -157,40 +160,45 @@ public class PropertiesManager : MonoBehaviour
 
 	public void SetUpPropertyDifficulty(int state)
 	{
-		SetUpPropertyDifficulty(_difficulty, GetUpPropertyDifficulty(state));
+		setUpPropertyDifficulty(_difficulty, GetUpPropertyDifficulty(state));
 	}
 
-	#endregion
+    public void SetUpPropertyScenary(int scenary)
+    {
+        setUpPropertyScenary(_scenary, _currentSong.Scenary);
+    }
 
-	#region Setup properties
+    #endregion
 
-	private void SetUpPropertyInput(GameObject template, string value)
+    #region Setup properties
+
+    private void setUpPropertyInput(GameObject template, string value)
     {
         template.GetComponentInChildren<InputField>().text = value;
     }
 
-    private void SetUpPropertyText(GameObject template, string value)
+    private void setUpPropertyText(GameObject template, string value)
     {
         template.GetComponentInChildren<Text>().text = value;
     }
 
-    private void SetUpPropertySlider(GameObject template, int value)
+    private void setUpPropertySlider(GameObject template, int value)
     {
 		template.GetComponentInChildren<Text>().text = string.Format("{0} km/h", value);
         // template.GetComponentInChildren<Slider>().value = value;
     }
 
-    private void SetUpPropertyFloat(GameObject template, float value)
+    private void setUpPropertyFloat(GameObject template, float value)
     {
         template.GetComponentInChildren<Text>().text = value.ToString();
     }
 
-    private void SetUpPropertyDebugMode(GameObject template, bool value)
+    private void setUpPropertyDebugMode(GameObject template, bool value)
     {
         template.GetComponentInChildren<Toggle>().isOn = value;
     }
 
-    private void SetUpPropertyDifficulty(GameObject template, string state)
+    private void setUpPropertyDifficulty(GameObject template, string state)
     {
         int difficulty = 0;
         switch (state.ToLower())
@@ -217,37 +225,49 @@ public class PropertiesManager : MonoBehaviour
 				break;
 		}
 
-		SetUpPropertyInput(_speed, _currentSong.Speed.ToString());
+		setUpPropertyInput(_speed, _currentSong.Speed.ToString());
 		template.GetComponentInChildren<Dropdown>().value = difficulty;
     }
+
+    private void setUpPropertyScenary(GameObject template, int scenary)
+    {
+        template.GetComponentInChildren<Dropdown>().value = scenary + 1;
+    }
+
     #endregion
 
     #region Read properties
 
-    private string GetPropertyInput(GameObject template)
+    private string getPropertyInput(GameObject template)
     {
         return template.GetComponentInChildren<InputField>().text;
     }
 
-    private string GetPropertyText(GameObject template)
+    private string getPropertyText(GameObject template)
     {
         return template.GetComponentInChildren<Text>().text;
     }
 
-    private float GetPropertySlider(GameObject template)
+    private float getPropertySlider(GameObject template)
     {
         return template.GetComponentInChildren<Slider>().value;
     }
 
-    private bool GetPropertyDebugMode(GameObject template)
+    private bool getPropertyDebugMode(GameObject template)
     {
         return template.GetComponentInChildren<Toggle>().isOn;
     }
 
-    private string GetUpPropertyDifficulty()
+    private string getUpPropertyDifficulty()
     {
 		int dropDownValue = _difficulty.GetComponentInChildren<Dropdown>().value;
 		return GetUpPropertyDifficulty(dropDownValue);
+    }
+
+    private string getUpPropertyScenary()
+    {
+        int dropDownValue = _scenary.GetComponentInChildren<Dropdown>().value - 1;
+        return dropDownValue.ToString();
     }
 
 	private string GetUpPropertyDifficulty(int state)
