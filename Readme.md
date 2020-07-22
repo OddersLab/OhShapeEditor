@@ -28,6 +28,9 @@ Maybe you want to start watching some nice tutorials using the editor from Youtu
 - ctrl + s - Save
 - ctrl + shift + s - Save as
 - Supr - Delete selected walls
+- Left/Right arrows or A/D control time bar
+- ctrl + m - Mirror (left/right) selected panels
+- ctrl + b - Paste mirror copied walls
 
 ## ℹ Level format
 
@@ -62,6 +65,12 @@ Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 - [OhShape Instagram]
 
 ## 🔧 Release notes
+### 1.0.4
+- Fix Paste Command when the walls overflow the length of the song
+- New Commands to move across the song. Right/Left arrows or A/D keys
+- Mirror the selected walls with ctrl + m
+- Paste the walls copied as mirrored with ctrl + b
+
 ### 1.0.3
 - Added beginner mode
 - Changing difficulty will change the speed of the song
