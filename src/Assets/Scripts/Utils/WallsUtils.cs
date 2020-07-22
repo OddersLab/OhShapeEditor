@@ -50,6 +50,77 @@ public static class WallsUtils
 		return (Walltype)Enum.Parse(typeof(Walltype), id.Substring(0, 2));
 	}
 
+    public static string FlipWallObject(string id)
+    {
+        string[] splitedName = id.ToUpper().Split('.');
+        string flippedID = "";
+
+        flippedID = id;  // sets default (original panel) ... for cases WC, EV 
+
+        try
+        {
+            WallsUtils.Walltype wallType = (WallsUtils.Walltype)Enum.Parse(typeof(WallsUtils.Walltype), splitedName[0]);
+
+            string wallId = splitedName[1];
+            switch (wallType)
+            {
+                case WallsUtils.Walltype.WP:
+                    wallId = flipObject(wallId);
+
+                    char[] wallIdChars = wallId.ToCharArray();
+
+                    char temporalChar = wallIdChars[1];
+                    wallIdChars[1] = wallIdChars[2];
+                    wallIdChars[2] = temporalChar;
+
+                    wallId = new string(wallIdChars);
+                    flippedID = "WP." + wallId;
+
+                    break;
+
+                case WallsUtils.Walltype.WA:
+                case WallsUtils.Walltype.WH:
+                    flippedID = flipObject(id);
+
+                    break;
+
+                case WallsUtils.Walltype.CN:
+
+                    int invertX = -(Int32.Parse(splitedName[1]));
+
+                    flippedID = splitedName[0] + "." + invertX.ToString() + "." + splitedName[2];
+                    break;
+
+                case WallsUtils.Walltype.WC:
+                case WallsUtils.Walltype.EV:
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            Log.AddLine("Bad Wall Id -> " + id + " Error : " + e.StackTrace);
+            Debug.Log("try catch caught");
+        }
+
+        // Method assumes the mirror of a valid panel should be valid, but if one wants to recheck
+        // validity, this would validate and conditionally return to default shape.
+
+        // if (!WallsUtils.CheckWallId(wallType, strPanel)) wallObject.WallObjectId = savedPanelCode;
+
+        return flippedID;
+    }
+
+    private static string flipObject(string id)
+    {
+        id = id.Replace('R', '*');
+        id = id.Replace('L', '$');
+
+        id = id.Replace('*', 'L');
+        id = id.Replace('$', 'R');
+
+        return id;
+    }
+
     public static bool CheckCoinWall(string x, string y)
     {
         int xMin = -10;

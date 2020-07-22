@@ -15,7 +15,8 @@ public sealed class DialogsWindowsManager : MonoBehaviour
 		NewFile,
 		LoadAudio,
 		LoadVideo,
-		DeleteObject
+		DeleteObject,
+        ConfirmPaste
 	}
 
     #region Inspector 
@@ -28,8 +29,9 @@ public sealed class DialogsWindowsManager : MonoBehaviour
     public RectTransform MSGboxNewFile;
 	public RectTransform MSGboxLoadVideo;
 	public RectTransform MSGboxLoadAudioClip;
-	public RectTransform MSGboxDeleteObject;
-	[Header("Background object")]
+    public RectTransform MSGboxDeleteObject;
+    public RectTransform MSGboxConfirmPaste;
+    [Header("Background object")]
 	public GameObject Blur;
 
 	[Header("Video file explorer")]
@@ -121,6 +123,9 @@ public sealed class DialogsWindowsManager : MonoBehaviour
 			case Window.DeleteObject:
 				_currentDialog = MSGboxDeleteObject;
 				break;
+            case Window.ConfirmPaste:
+                _currentDialog = MSGboxConfirmPaste;
+                break;
 		}
 	}
 

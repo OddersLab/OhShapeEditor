@@ -36,6 +36,9 @@ public class OhShapeEditor : MonoBehaviour
     public InputField Volume;
     public InputField Zoom;
 
+    public bool ConfirmPaste = false;
+    public bool FinishPasteDialog = false;
+
     [Header("Scroll Configuration")]
     [Range(0, 1)]
     public float ScrollAmount = 0.8f;
@@ -69,6 +72,10 @@ public class OhShapeEditor : MonoBehaviour
     private float _currentScrollTime = 0;
     private Vector2 _waveTimeRange = Vector2.zero;
     private Canvas _mainCanvas;
+
+    private int _cursorSpeedLimiter = 0;   // hmmps added, these are used in arrow key time bar control
+    private float _keyTimer = 0f;
+    private bool _keySingle = true;
 
     private WallObject _currentWallObject;
     private List<WallObject> _wallObjects;
@@ -140,7 +147,7 @@ public class OhShapeEditor : MonoBehaviour
         //Update cursor in screen.
         if (_audioManager.IsPlaying())
         {
-            var playTime = _audioManager.GetCurrentClipTime();
+            float playTime = _audioManager.GetCurrentClipTime();
 
             if (_waveTimeRange.y < playTime || _waveTimeRange.x > playTime)
             {
@@ -148,9 +155,9 @@ public class OhShapeEditor : MonoBehaviour
                 StartCoroutine(BarToPosition(_audioManager.GetCurrentClipTime()));
             }
 
-            var pos = ClipInfo.SecToPixel(playTime);
-            _cursor.anchorMin = new Vector2(pos, 0);
-            _cursor.anchorMax = new Vector2(pos, 1);
+            float position = ClipInfo.SecToPixel(playTime);
+            _cursor.anchorMin = new Vector2(position, 0);
+            _cursor.anchorMax = new Vector2(position, 1);
             _cursor.anchoredPosition = Vector2.zero;
 
             _propertiesManager.UpdateClipTime(playTime.ToString("F2"));
@@ -195,6 +202,81 @@ public class OhShapeEditor : MonoBehaviour
             return;
         }
 
+
+        arrowMovement();
+        playPauseClip();
+        createNewWall();
+        removeWall();
+
+        specialKeyBindings();
+    }
+
+    private void arrowMovement()
+    {
+        // Right/left arrow provides control of time bar using arrow keys
+        // pressing once moves 0.01 seconds, hold for 1 second for multiple increments
+
+        float time = 0.01f;
+
+        bool left = Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A);
+        bool right = Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D);
+
+        if (left) {
+            time = -0.01f;
+        }
+
+        if (right)
+        {
+            time = 0.01f;
+        }
+
+        if (left || right)
+        {
+            clearListOfSelectedObject();
+            if (_keySingle == true)  // Run only once until 1 second passes, then go ahead and run ...
+            {
+                _cursorTime += time;
+                if (_cursorTime <= 0.0f) _cursorTime = 0.0f;
+                if (_cursorTime >= ClipInfo.ClipTimeSize) _cursorTime = ClipInfo.ClipTimeSize;
+
+                SetCursorPosition();
+                _propertiesManager.UpdateClipTime(_cursorTime.ToString("F2"));
+
+                _keyTimer = Time.time;
+                _keySingle = false;
+            }
+
+            else if ((Time.time > (_keyTimer + 1)) && _keySingle == false)  // now run till keyup event.   
+            {
+                _cursorSpeedLimiter++;
+
+                if (_cursorSpeedLimiter > 3)   // limit cursor scrolling speed
+                {
+                    _cursorTime += time;
+                    SetCursorPosition();
+                    _propertiesManager.UpdateClipTime(_cursorTime.ToString("F2"));
+
+                    _cursorSpeedLimiter = 0;
+                }
+            }
+
+            if (_waveTimeRange.y < _cursorTime || _waveTimeRange.x > _cursorTime)
+            {
+                UpdateClipRenderTimes();
+                StartCoroutine(BarToPosition(_cursorTime));
+            }
+
+            // RefreshClipScroll();
+        }
+
+        if (Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.A))
+        {
+            _keySingle = true;
+        }
+    }
+
+    private void playPauseClip()
+    {
         if (Input.GetKeyUp(KeyCode.Space))
         {
 
@@ -207,6 +289,10 @@ public class OhShapeEditor : MonoBehaviour
                 OnPlayClip();
             }
         }
+    }
+
+    private void createNewWall()
+    {
         //Create New object whit key N, at current time if song is playing if not at cursor position
         if (Input.GetKeyDown(KeyCode.N))
         {
@@ -219,12 +305,24 @@ public class OhShapeEditor : MonoBehaviour
                 OnAddWallObject(_cursorTime);
             }
         }
+    }
 
+    private void removeWall()
+    {
+        if (Input.GetKeyDown(KeyCode.Delete))
+        {
+            OnDeleteWallObject();
+        }
+    }
+
+    private void specialKeyBindings()
+    {
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
         {
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
-                if (Input.GetKeyDown(KeyCode.S)) {
+                if (Input.GetKeyDown(KeyCode.S))
+                {
                     OnSaveAs();
                 }
 
@@ -236,17 +334,20 @@ public class OhShapeEditor : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.V))
             {
-                Paste();
+                StartCoroutine(Paste());
             }
             if (Input.GetKeyDown(KeyCode.S))
             {
                 OnSave();
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Delete))
-        {
-            OnDeleteWallObject();
+            else if (Input.GetKeyDown(KeyCode.M))
+            {
+                Flip();
+            }
+            else if (Input.GetKeyDown(KeyCode.B))
+            {
+                StartCoroutine(Paste(true));
+            }
         }
     }
 
@@ -1331,25 +1432,96 @@ public class OhShapeEditor : MonoBehaviour
         _clipboard = new HashSet<WallObject>(_selectedWallObjects);
     }
 
-    public void Paste() 
+
+    public void Flip()
     {
-        // TODO what happens if time + songTime?
-        // TODO set as not active
+        _clipboard = new HashSet<WallObject>(_selectedWallObjects);
+        // clearListOfSelectedObject();
+
+        foreach (WallObject wallObject in _clipboard)
+        {
+            string flippedId = WallsUtils.FlipWallObject(wallObject.WallObjectId);
+            if (_clipboard.Count == 1)
+            {
+                OnUpdateWallId(flippedId);
+            }
+
+            wallObject.WallObjectId = flippedId;
+        }
+
+
+    }
+
+    public IEnumerator Paste(bool flipped = false) 
+    {
         float initTime = Mathf.Infinity;
         clearListOfSelectedObject();
+        List<WallObject> wallObjectsToCreate = new List<WallObject>();
+
         foreach (WallObject wallObject in _clipboard)
         {
             if (wallObject.Time < initTime) initTime = wallObject.Time;
         }
+
+        bool pasteWithoutProblems = canPasteWithoutProblems(initTime);
+
+        if (!pasteWithoutProblems)
+        {
+            DialogsWindowsManager.Instance.ShowWindow(DialogsWindowsManager.Window.ConfirmPaste);
+
+            while (!FinishPasteDialog)
+            {
+                yield return null;
+            }
+
+            FinishPasteDialog = false;
+
+            if (!ConfirmPaste)
+            {
+                yield break;
+            }
+        }
+
         foreach (WallObject wallObject in _clipboard)
         {
             float time = _cursorTime + wallObject.Time - initTime;
-            time = time > ClipInfo.ClipTimeSize ? ClipInfo.ClipTimeSize : time;
-            WallObject currentWallObject = _songManager.CreateWallObject(wallObject.WallObjectId, time, true, this);
+            if (!pasteWithoutProblems && time > ClipInfo.ClipTimeSize)
+            {
+                continue;
+            }
+
+            // time = time > ClipInfo.ClipTimeSize ? ClipInfo.ClipTimeSize : time;
+
+            string newWallObjectID = flipped == true ? WallsUtils.FlipWallObject(wallObject.WallObjectId) : wallObject.WallObjectId;
+
+            WallObject currentWallObject = _songManager.CreateWallObject(newWallObjectID, time, true, this);
             addWallObjectToSelectedList(currentWallObject);
             currentWallObject.GetComponent<Transform>().Find("MarkLine").gameObject.SetActive(_zoom >= WallMarklineVisibleAtZoomLevel);
             currentWallObject.GetComponent<Transform>().Find("Toggle/Wall Id").gameObject.SetActive(_zoom >= WallIdVisibleAtZoomLevel);
         }
+
+
+        yield break;
+    }
+
+    public void PasteConfirmation(bool confirmation)
+    {
+        FinishPasteDialog = true;
+        ConfirmPaste = confirmation;
+    }
+
+    private bool canPasteWithoutProblems(float initTime)
+    {
+        foreach (WallObject wallObject in _clipboard)
+        {
+            float time = _cursorTime + wallObject.Time - initTime;
+            if (time > ClipInfo.ClipTimeSize)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
     #endregion
 
