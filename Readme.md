@@ -66,6 +66,7 @@ Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 
 ## 🔧 Release notes
 ### 1.0.4
+- Posibility to add the scenary you want to use in your songs 😁
 - Fix Paste Command when the walls overflow the length of the song
 - New Commands to move across the song. Right/Left arrows or A/D keys
 - Mirror the selected walls with ctrl + m
