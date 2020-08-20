@@ -41,7 +41,7 @@ public class DeserializedSong
     public bool Grid { get; set; }
     public float GridBpm { get; set; }
     public float GridOffset { get; set; }
-    public int Scenary { get; set; }
+    public int Scenario { get; set; }
 
 
 	public bool ForceDebug { get; set; }

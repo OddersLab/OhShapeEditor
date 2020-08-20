@@ -391,12 +391,12 @@ Prefab:
     - target: {fileID: 224912219052812520, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00002670288
+      value: 0.000038146973
       objectReference: {fileID: 0}
     - target: {fileID: 224540965954670956, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -0.0000076293945
+      value: -0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 224876798830259696, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
@@ -1008,10 +1008,36 @@ Prefab:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1345825238875098, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 224933681740881268, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114459910068691106, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetUpPropertyScenario
+      objectReference: {fileID: 0}
+    - target: {fileID: 114459910068691106, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1721483994078352, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+      propertyPath: m_Name
+      value: Scenario
+      objectReference: {fileID: 0}
+    - target: {fileID: 114459910068691106, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1441914492}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1441914492 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114901800166605496, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+    type: 2}
+  m_PrefabInternal: {fileID: 1441914491}
+  m_Script: {fileID: 11500000, guid: b08299fc15a8f444dbb538b7c9c6f1ad, type: 3}

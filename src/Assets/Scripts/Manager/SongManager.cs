@@ -44,7 +44,7 @@ public class SongManager : MonoBehaviour
             "clip: {1}\n" +
             "speed: {2}\n" +
             "audioTime: {3}\n" +
-            "scenary: {4}\n\n";
+            "scenario: {4}\n\n";
 
         songYaml += "video: {5}\n" +
             "vOffset: {6}\n\n";
@@ -61,7 +61,7 @@ public class SongManager : MonoBehaviour
             "gridOffset: {14}\n\n\n";
 
 
-        string songHead = string.Format(songYaml, CurrentSong.Title, CurrentSong.Clip.Replace(".ogg", ""), CurrentSong.Speed, CurrentSong.AudioTime, CurrentSong.Scenary,
+        string songHead = string.Format(songYaml, CurrentSong.Title, CurrentSong.Clip.Replace(".ogg", ""), CurrentSong.Speed, CurrentSong.AudioTime, CurrentSong.Scenario,
             CurrentSong.Video, CurrentSong.VOffset,
             CurrentSong.ForceDebug, CurrentSong.Offset,
             CurrentSong.Author, CurrentSong.Difficulty, CurrentSong.Preview,

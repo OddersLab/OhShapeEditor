@@ -25,7 +25,7 @@ public class PropertiesManager : MonoBehaviour
     private GameObject _author;
     private GameObject _preview;
     private GameObject _difficulty;
-    private GameObject _scenary;
+    private GameObject _scenario;
 	private GameObject _debugMode;
 
 	#endregion
@@ -54,11 +54,10 @@ public class PropertiesManager : MonoBehaviour
         _preview = songContent.Find("Preview").gameObject;
         _speed = songContent.Find("Speed/Input").gameObject;
         _offset = songContent.Find("Offset").gameObject;
-        _scenary = songContent.Find("Scenary").gameObject;
+        _scenario = songContent.Find("Scenario").gameObject;
 
         _audio = songContent.Find("AudioFile/Audio").gameObject;
 
-        
         
         _difficulty = songContent.Find("Difficulty").gameObject;
 		_debugMode = songContent.Find("DebugMode").gameObject;
@@ -110,7 +109,7 @@ public class PropertiesManager : MonoBehaviour
         _currentSong.Title = getPropertyInput(_songTitle);
 		_currentSong.Difficulty = getUpPropertyDifficulty();
 		_currentSong.Speed = Int32.Parse(getPropertyInput(_speed));
-        _currentSong.Scenary = Int32.Parse(getUpPropertyScenary());
+        _currentSong.Scenario = Int32.Parse(getUpPropertyScenario());
 		_currentSong.Clip = getPropertyText(_audio);
 		_currentSong.Offset = float.Parse(getPropertyInput(_offset));
         _currentSong.Author = getPropertyInput(_author);
@@ -147,7 +146,7 @@ public class PropertiesManager : MonoBehaviour
         setUpPropertyInput(_author, _currentSong.Author);
         setUpPropertyInput(_preview, _currentSong.Preview.ToString());
         setUpPropertyDifficulty(_difficulty, _currentSong.Difficulty);
-        setUpPropertyScenary(_scenary, _currentSong.Scenary);
+        setUpPropertyScenario(_scenario, _currentSong.Scenario);
 		setUpPropertyDebugMode(_debugMode, _currentSong.ForceDebug);
 		setUpPropertyInput(_songTitle, _currentSong.Title);
 		setUpPropertyInput(_speed, speed);
@@ -163,9 +162,9 @@ public class PropertiesManager : MonoBehaviour
 		setUpPropertyDifficulty(_difficulty, GetUpPropertyDifficulty(state));
 	}
 
-    public void SetUpPropertyScenary(int scenary)
+    public void SetUpPropertyScenario(int scenario)
     {
-        setUpPropertyScenary(_scenary, _currentSong.Scenary);
+        _currentSong.Scenario = scenario;
     }
 
     #endregion
@@ -229,9 +228,9 @@ public class PropertiesManager : MonoBehaviour
 		template.GetComponentInChildren<Dropdown>().value = difficulty;
     }
 
-    private void setUpPropertyScenary(GameObject template, int scenary)
+    private void setUpPropertyScenario(GameObject template, int scenario)
     {
-        template.GetComponentInChildren<Dropdown>().value = scenary + 1;
+        template.GetComponentInChildren<Dropdown>().value = scenario;
     }
 
     #endregion
@@ -264,9 +263,10 @@ public class PropertiesManager : MonoBehaviour
 		return GetUpPropertyDifficulty(dropDownValue);
     }
 
-    private string getUpPropertyScenary()
+    private string getUpPropertyScenario()
     {
-        int dropDownValue = _scenary.GetComponentInChildren<Dropdown>().value - 1;
+        Debug.Log("getUpPropertyScenario");
+        int dropDownValue = _scenario.GetComponentInChildren<Dropdown>().value;
         return dropDownValue.ToString();
     }
 
