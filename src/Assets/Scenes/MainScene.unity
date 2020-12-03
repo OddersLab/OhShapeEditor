@@ -391,12 +391,12 @@ Prefab:
     - target: {fileID: 224912219052812520, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000038146973
+      value: 0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 224540965954670956, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000015258789
+      value: 0.0000076293945
       objectReference: {fileID: 0}
     - target: {fileID: 224876798830259696, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
@@ -1032,7 +1032,62 @@ Prefab:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1441914492}
-    m_RemovedComponents: []
+    - target: {fileID: 224903936257072738, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224603023353167576, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224998241084966848, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114130030729747374, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_Options.m_Options.Array.data[0].m_Text
+      value: Easy
+      objectReference: {fileID: 0}
+    - target: {fileID: 114130030729747374, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_Options.m_Options.Array.data[1].m_Text
+      value: Medium
+      objectReference: {fileID: 0}
+    - target: {fileID: 114130030729747374, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_Options.m_Options.Array.data[2].m_Text
+      value: Hard
+      objectReference: {fileID: 0}
+    - target: {fileID: 114130030729747374, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_Options.m_Options.Array.data[3].m_Text
+      value: Expert
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114458088110712486, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114063224257709326, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114278229394598992, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114242682491650738, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114542180738485696, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114476798662294536, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114175537598779682, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114151698314575694, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114696468041212164, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114681343478492324, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114445589397275112, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114639210917467278, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114456845208905860, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114343678012578580, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114026892934508126, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114059814457256438, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114141493644826054, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114534074698152612, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114426754127916654, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+    - {fileID: 114041334024515188, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
   m_IsPrefabParent: 0
 --- !u!114 &1441914492 stripped

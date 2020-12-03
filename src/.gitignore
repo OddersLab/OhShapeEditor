@@ -45,6 +45,5 @@ Assets/UniversalMediaPlayer
 # ===========
 Library/*/**
 Library
-Assets/Scripts/UniversalMediaPlayer.cs
 Temp/*/**
 Temp
