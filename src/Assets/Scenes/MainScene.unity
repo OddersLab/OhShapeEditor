@@ -263,6 +263,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114459910068691106, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_Options.m_Options.Array.size
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 224543014174124744, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_LocalPosition.x
@@ -391,12 +396,12 @@ Prefab:
     - target: {fileID: 224912219052812520, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000030517578
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224540965954670956, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.0000076293945
+      value: -0.000032424927
       objectReference: {fileID: 0}
     - target: {fileID: 224876798830259696, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
@@ -1050,7 +1055,7 @@ Prefab:
     - target: {fileID: 114130030729747374, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_Options.m_Options.Array.data[0].m_Text
-      value: Easy
+      value: Try out
       objectReference: {fileID: 0}
     - target: {fileID: 114130030729747374, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
@@ -1066,6 +1071,11 @@ Prefab:
         type: 2}
       propertyPath: m_Options.m_Options.Array.data[3].m_Text
       value: Expert
+      objectReference: {fileID: 0}
+    - target: {fileID: 114459910068691106, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_Options.m_Options.Array.data[3].m_Text
+      value: Scenary 3
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114458088110712486, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
