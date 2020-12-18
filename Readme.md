@@ -127,7 +127,7 @@ Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 [HTC Viveport (Viveport & Infinity)]: <https://www.viveport.com/apps/f4e7ef44-f6f3-420e-93a0-fd6ea5bd38df/OhShape/>
 [Basic concepts tutorial]:<https://youtu.be/GIHrbcXZna4>
 [Advanced Tutorial I]:<https://youtu.be/JMCSHU7YV5U>
-[UniversalMediaPlayer]: <https://https://assetstore.unity.com/packages/tools/video/ump-pro-win-mac-linux-webgl-83281>
+[UniversalMediaPlayer]: <https://assetstore.unity.com/packages/tools/video/ump-pro-win-mac-linux-webgl-83281>
 [The OhShape main website]: <https://ohshapevr.com/>
 [The OhShape Discord]: <https://discord.gg/jAGYAvU>
 [OhShape Twitter]: <https://twitter.com/OhShape>  
