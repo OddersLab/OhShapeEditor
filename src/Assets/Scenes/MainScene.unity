@@ -396,12 +396,12 @@ Prefab:
     - target: {fileID: 224912219052812520, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 0.000038146973
       objectReference: {fileID: 0}
     - target: {fileID: 224540965954670956, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -0.00004386902
+      value: 0.000009536743
       objectReference: {fileID: 0}
     - target: {fileID: 224876798830259696, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
@@ -1086,6 +1086,11 @@ Prefab:
         type: 2}
       propertyPath: m_Options.m_Options.Array.data[2].m_Text
       value: Scenario 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114276463286861196, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_Text
+      value: SCENARIO
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114458088110712486, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
