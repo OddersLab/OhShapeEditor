@@ -71,6 +71,12 @@ And add this line to `Assets/Scripts/Manager/VideoManager.cs`
 - [OhShape Instagram]
 
 ## 🔧 Release notes
+
+### 1.0.5
+- Added some ‘hidden’ walls
+- Updated the difficulty system
+- Updated the new ‘Electro party’ scenario
+
 ### 1.0.4
 - Posibility to add the scenary you want to use in your songs 😁
 - Fix Paste Command when the walls overflow the length of the song
