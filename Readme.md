@@ -55,6 +55,12 @@ If you want to add the video library, buy UniversalMediaPlayer and add this line
 
 Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 
+And add this line to `Assets/Scripts/Manager/VideoManager.cs`
+
+```
+      using UMP;
+```
+
 ### Dependences
 - [UniversalMediaPlayer]: if you don't have this dependence, you will not be abble to add videos, but the editor stills working
 
