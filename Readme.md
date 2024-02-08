@@ -72,6 +72,11 @@ And add this line to `Assets/Scripts/Manager/VideoManager.cs`
 
 ## 🔧 Release notes
 
+### 1.0.6
+- Added paste between editors feature
+- Width WA keys update
+- Fix zoom
+
 ### 1.0.5
 - Added some ‘hidden’ walls
 - Updated the difficulty system
