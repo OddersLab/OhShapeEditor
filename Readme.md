@@ -55,6 +55,12 @@ If you want to add the video library, buy UniversalMediaPlayer and add this line
 
 Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 
+And add this line to `Assets/Scripts/Manager/VideoManager.cs`
+
+```
+      using UMP;
+```
+
 ### Dependences
 - [UniversalMediaPlayer]: if you don't have this dependence, you will not be abble to add videos, but the editor stills working
 
@@ -65,6 +71,12 @@ Also, you have to delete `Assets/Scripts/UniversalMediaPlayer.cs`
 - [OhShape Instagram]
 
 ## 🔧 Release notes
+
+### 1.0.5
+- Added some ‘hidden’ walls
+- Updated the difficulty system
+- Updated the new ‘Electro party’ scenario
+
 ### 1.0.4
 - Posibility to add the scenary you want to use in your songs 😁
 - Fix Paste Command when the walls overflow the length of the song
