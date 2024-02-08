@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 50774703838574312}
   - component: {fileID: 61738743029745328}
   m_Layer: 5
-  m_Name: 'Wall '
+  m_Name: Wall
   m_TagString: Objects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -451,6 +451,8 @@ MonoBehaviour:
   PressedColorCoin: {r: 0.5647059, g: 0.40784314, b: 0, a: 1}
   PressedColorEvent: {r: 0, g: 0.16862746, b: 0.49019608, a: 1}
   PressedColorNull: {r: 0.21960784, g: 0.21960784, b: 0.21960784, a: 1}
+  Collider: {fileID: 61738743029745328}
+  ToggleCollider: {fileID: 61824944315283730}
   WallObjectId: 
   Time: 0
 --- !u!114 &114915751362249114

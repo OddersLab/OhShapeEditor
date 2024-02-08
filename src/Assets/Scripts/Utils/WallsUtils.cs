@@ -137,7 +137,7 @@ public static class WallsUtils
     public static bool CheckAvoidWall(string id, string time)
     {
         float lenght = float.TryParse(time, out lenght) ? lenght : 0;
-        return WallsAvoidIds.Contains(id) && lenght >= 2 && lenght <= 1000;
+        return WallsAvoidIds.Contains(id) && lenght >= 2 && lenght <= 100000;
     }
 
     public static Sprite getWallSprite(string id) // TODO CamelCase

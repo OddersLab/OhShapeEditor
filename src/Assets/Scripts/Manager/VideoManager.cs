@@ -3,252 +3,161 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System;
+using UnityEngine.Video;
 
 
 //Manage video.
 public class VideoManager : MonoBehaviour
 {
-#region Inspector
-
-    //UI Output variables
-    public Transform VideoContainer;
+    #region Public Variables
+	[Header("Output")]
 	public Text TimeText;
-	[Space]
-	//UI Input variables
+
+	[Header("Input")]
 	public Text VideoName;
-    public InputField OffsetValue;
+	public InputField OffsetValue;
 	public Toggle MuteToggle;
-	[Space]
-    //Player prefab
-    public UniversalMediaPlayer PlayerPrefab;
+	public VideoPlayer VideoPlayer;
+	public AudioSource AudioSource;
 
-    [Space]
-    public Transform VideoWallsLibrary;
+	[Header("Components")]
+	public GameObject NewVideo;
+	public GameObject VideoLoaded;
 
-#endregion
+	[HideInInspector] public float Offset;
+	#endregion Public Variables
 
-#region references
 
-    //Private variables
-    private string _videoFilename;
-    private float _currentTime = 0f;
-    private float _offsetTime = 0f;
-    private bool _playingState = false;
-    private UniversalMediaPlayer _player;
+	#region Properties
+	public bool IsPlaying { get; private set; }
+	public float Time { get; private set; }
+	public string Name { get; private set; }
+	#endregion Properties
 
-    #endregion
 
-    #region Initialize
+	#region Unity Methods
+	private void Update()
+	{
+		TimeText.text = VideoPlayer.time.ToString("F2") + " s";
+	}
+	#endregion Unity Methods
 
-    //Initial setup, when load.
-    public void Setup(string video, float offset)
-    {
-        if (_player == null) return;
-        Close();
 
-        VideoName.text = video;
+	#region Main Methods
+	public void Load(string video, float offset)
+	{
+		Close();
+
+		VideoName.text = video;
 		OffsetValue.text = offset.ToString("F2");
 
-        _offsetTime = offset;
+		Offset = offset;
 
-		//Set the video
-        SetVideo(video);
-    }
+		SetVideo(video);
+	}
+	public void SetVideo(string name)
+	{
+		Name = name;
+		string path = FileManager.VideoPath + Name;
 
-    public void SetVideo(string videoFilename)
-    {
-        if (_player == null) return;
-        _videoFilename = videoFilename;
-        string file = FileManager.VideoPath + _videoFilename;
-
-        if (!File.Exists(file))
-        {
+		if (!File.Exists(path))
+		{
 			DialogsWindowsManager.Instance.InfoMessage("Video Not Exist");
-            return;
-        }
+			return;
+		}
 
-        ShowVideoManager(true);
+		VideoPlayer.url = path;
 
-        _player.Path = Path.GetFullPath(FileManager.VideoPath + _videoFilename);
+		ShowVideoManager(true);
 
-        Mute();
-        Play();
-        StartCoroutine(getframe());
-    }
+		VideoPlayer.enabled = true;
+		Mute(true);
+		Play();
 
-#endregion
-
-#region Video Control
+		StartCoroutine(GetFristFrameCoroutine());
+	}
 
 	public void Close()
-    {
-        if (_player == null) return;
-        Destroy(_player.gameObject);
-        _player = Instantiate(PlayerPrefab, VideoContainer);
-        _videoFilename = "";
-        _offsetTime = 0f;
-
-        VideoName.text = "";
-        OffsetValue.text = "0.00";
-
-        _player.Path = "";
-        ShowVideoManager(false);
-    }
-
-    public void Play()
-    {
-        if (_player == null) return;
-        if (!File.Exists(_player.Path)) return;
-        _playingState = true;
-        _player.Play();
-
-    }
-
-    public void Stop()
-    {
-        if (_player == null) return;
-        _playingState = false;
-        _player.Pause();
-    }
-
-#endregion
-
-#region Utils
-	//Make sure to get a first frame for video preview
-	IEnumerator getframe()
-    {
-	
-        while (!_player.AbleToPlay)
-        {
-            yield return null;
-        }
-
-        Play();
-
-        while (!_player.IsPlaying)
-        {
-            yield return null;
-        }
-
-        yield return new WaitForSeconds((float)1/(_player.FrameRate*4));
-
-        Stop();
-    }
-
-	public void SetVideoOffset(float offset)
 	{
-        _offsetTime = offset;
+		VideoPlayer.enabled = false;
+		Name = "";
+		Offset = 0f;
+
+		VideoName.text = "";
+		OffsetValue.text = "0.00";
+
+		ShowVideoManager(false);
 	}
-	public float GetVideoOffset()
+	public void Play()
 	{
-		return _offsetTime;
+		IsPlaying = true;
+		VideoPlayer.Play();
 	}
+	public void Stop()
+	{
+		IsPlaying = false;
+		VideoPlayer.Pause();
+	}
+	#endregion Main Methods
+
+
+	#region Utility Methods
+	// Make sure to get a first frame for video preview
+	IEnumerator GetFristFrameCoroutine()
+	{
+		while (!VideoPlayer.enabled) yield return null;
+
+		Play();
+
+		while (!VideoPlayer.isPlaying) yield return null;
+
+		yield return new WaitForSeconds(1f / (VideoPlayer.frameRate * 4));
+
+		Stop();
+	}
+
 	public void AddVideoOffset(float amount)
 	{
-		_offsetTime += amount;
-		OffsetValue.text = _offsetTime.ToString("F2");
+		Offset += amount;
+		OffsetValue.text = Offset.ToString("F2");
 	}
 
-#endregion
-
-#region MonoBehaviour
-
-	private void Awake()
-    {
-        
-        if (UniversalMediaPlayer.IsValidLibrary())
-        {
-            _player = Instantiate(PlayerPrefab, VideoContainer);
-            return;
-        }
-
-        _player = null;
-        VideoWallsLibrary.Find("VideoBlocked").gameObject.SetActive(true);
-        VideoWallsLibrary.Find("NewVideo").gameObject.SetActive(false);
-        VideoWallsLibrary.Find("VideoLoaded").gameObject.SetActive(false);
-    }
-
-    private void Update()
-    {
-        if (_player == null) return;
-        
-        if (_player.Time > 9999999999)
-        {
-            TimeText.text = "0 s";
-        }
-        else
-        {
-            TimeText.text = (_player.Time * 0.001f).ToString("F2") + " s";
-        }
-    }
-
-#endregion
-
-#region Audio
-
-	//Called by UI mute button toggle.
-	public void MuteController(bool state)
+	// Called by UI mute button toggle
+	public void Mute(bool mute)
 	{
-		if (state)
-			Mute();
+		AudioSource.mute = mute;
+		MuteToggle.isOn = mute;
+	}
+
+	public void SetTime(float time)
+	{
+		Time = time + Offset;
+
+		if (Time >= GetVideoURLTime())
+		{
+			VideoPlayer.time = GetVideoURLTime();
+		}
 		else
-			UnMute();
+		{
+			VideoPlayer.Play();
+			VideoPlayer.time = Time;
+		}
+
+		if (!IsPlaying)
+			StartCoroutine(GetFristFrameCoroutine());
 	}
 
-	public void Mute()
-    {
-        if (_player == null) return;
-        _player.Mute = true;
-		MuteToggle.isOn = true;
-    }
-    public void UnMute()
-    {
-        if (_player == null) return;
-        _player.Mute = false;
-		MuteToggle.isOn = false;
+	public float GetVideoURLTime()
+	{
+		double time = VideoPlayer.frameCount / VideoPlayer.frameRate;
+		TimeSpan videoUrlLength = TimeSpan.FromSeconds(time);
+		return videoUrlLength.Seconds;
 	}
 
-#endregion
-
-#region Time
-
-	public void SetTime(float newTime)
-    {
-        if (_player == null) return;
-        if (!_player.IsReady) return;
-
-        _currentTime = newTime + _offsetTime;
-        if (_currentTime * 1000 >= _player.Length)
-        {
-            Log.AddLine("Out of video time");
-            return;
-        }
-
-        _player.Time = (long)(_currentTime * 1000);
-
-        if (!_playingState)
-        {
-            StartCoroutine(getframe());
-        }
-    }
-
-    #endregion
-
-    #region Show Video Manager
-
-    public void ShowVideoManager(bool show)
-    {
-        if (_player == null) return;
-        VideoWallsLibrary.Find("NewVideo").gameObject.SetActive(!show);
-        VideoWallsLibrary.Find("VideoLoaded").gameObject.SetActive(show);
-    }
-    #endregion
-
-    #region Library Installed
-    public bool IsLibraryInstalled()
-    {
-        return _player != null;
-    }
-
-    #endregion
+	public void ShowVideoManager(bool show)
+	{
+		NewVideo.SetActive(!show);
+		VideoLoaded.SetActive(show);
+	}
+	#endregion Utility Methods
 }

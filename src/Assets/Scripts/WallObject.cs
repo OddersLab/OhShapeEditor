@@ -7,9 +7,29 @@ using System.Collections.Generic;
 using System.Collections;
 
 //Manage objects, (walls, coins...) 
+[Serializable]
+public class SerializableWallObjects
+{
+    [Serializable]
+    public class SerializableWallObject
+    {
+        public string Name;
+        public float Time;
+
+        public SerializableWallObject(string name, float time)
+        {
+            Name = name;
+            Time = time;
+        }
+    }
+
+    public List<SerializableWallObject> serializableWallObjects = new List<SerializableWallObject>();
+}
 
 public class WallObject : MonoBehaviour
 {
+    private const float DEFAULT_WIDTH = 30f;
+    
     #region Inspector
 
     public Color ColorPose = new Color(0.2f, 0.56f, 0.91f, 1.0f);
@@ -28,6 +48,10 @@ public class WallObject : MonoBehaviour
     public Color PressedColorEvent = new Color(0.91f, 0.2f, 0.2f, 1.0f);
     public Color PressedColorNull = new Color(0.91f, 0.2f, 0.2f, 1.0f);
 
+    [Space]
+    public BoxCollider2D Collider;
+    public BoxCollider2D ToggleCollider;
+    
     #endregion
 
     #region Wall Info
@@ -41,6 +65,7 @@ public class WallObject : MonoBehaviour
 
     #region References
 
+    private RectTransform _rect;
     private Toggle _toggle;
     private Text _wallIdText;
     private Text _wallTypeText;
@@ -55,6 +80,7 @@ public class WallObject : MonoBehaviour
 
     private void Awake()
     {
+        _rect = GetComponent<RectTransform>();
         Transform toggle = transform.Find("Toggle");
         _wallMarkLine = transform.Find("MarkLine") as RectTransform;
 
@@ -64,6 +90,7 @@ public class WallObject : MonoBehaviour
         // allMyWallObjects.Add(this);
     }
 
+    public float Width { get; private set; }
     #endregion
 
     #region Wall edition
@@ -108,6 +135,66 @@ public class WallObject : MonoBehaviour
         {
             DialogsWindowsManager.Instance.InfoMessage("Error, bad time introduced.");            
         }
+    }
+
+    private void Update()
+    {
+        UpdateWidth();
+    }
+
+    public void UpdateWidth()
+    {
+        string id = WallObjectId.Substring(0, 2);
+        if (id == "WA")
+        {
+            float min = OhShapeEditor.Instance.TimeStart;
+            float max = OhShapeEditor.Instance.TimeEnd;
+
+            string[] values = WallObjectId.Split('.', ',');
+            float duration = DEFAULT_WIDTH;
+            switch (id)
+            {
+                case "WA": duration = int.Parse(values[2]) / 100f; break;
+                case "WG": duration = int.Parse(values[6]) / 1000f; break;
+            }
+
+            float startTime = Time;
+            float endTime = startTime + duration;
+
+            float t = Mathf.InverseLerp(min, max, endTime);
+            float endX = Screen.width * t;
+            float startX = _rect.position.x;
+            Width = endX - startX;
+
+
+            // Adapt to screen size
+            float a = 1630f / 917f;
+            float b = (float)Screen.width / (float)Screen.height;
+            Width *= Increment(a, b, duration);
+            Width *= 1f / Increment(a, b, duration);
+
+            // Patch
+            float zoom = OhShapeEditor.Instance.zoom;
+            Width -= (duration * zoom) - (duration / 10f) - (4f * zoom);
+
+            if ((startTime > min && startTime < max) || (endTime > min && endTime < max))
+            {
+                if (float.IsNaN(Width)) return;
+
+                _rect.sizeDelta = new Vector2(Width, _rect.sizeDelta.y);
+                Collider.offset = new Vector2(Width / 2, Collider.offset.y);
+                Collider.size = new Vector2(Width, Collider.size.y);
+                ToggleCollider.size = new Vector2(Width, ToggleCollider.size.y);
+            }
+
+            
+        }
+        else _rect.sizeDelta = new Vector2(DEFAULT_WIDTH, _rect.sizeDelta.y);
+    }
+
+    private float Increment(float x, float y, float z)
+    {
+        return 1f + (1f - x / y) / z;
     }
 
     public void ChangeTime(float time)

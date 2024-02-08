@@ -9,6 +9,8 @@ public class OhShapeEditor : MonoBehaviour
 {
     #region Inspector
 
+    public static OhShapeEditor Instance;
+    
     [Header("General Configuration")]
     [SerializeField]
     private int ZoomMin; // 1
@@ -28,6 +30,7 @@ public class OhShapeEditor : MonoBehaviour
     public GameObject NotStartedBackground;
     public ZoomController ZoomController;
     public Button SaveButton;
+    public Scrollbar Scrollbar;
     public RectTransform WaveWalls;
     public ScrollRect SongScrollBar;
     public Toggle GridToggle;
@@ -71,6 +74,7 @@ public class OhShapeEditor : MonoBehaviour
     private int _indexZoom = 0;
     private float _currentScrollTime = 0;
     private Vector2 _waveTimeRange = Vector2.zero;
+    private Vector2 zoomMousePosition;
     private Canvas _mainCanvas;
 
     private int _cursorSpeedLimiter = 0;   // hmmps added, these are used in arrow key time bar control
@@ -81,7 +85,15 @@ public class OhShapeEditor : MonoBehaviour
     private List<WallObject> _wallObjects;
     private List<WallObject> _selectedWallObjects;
 
-    private HashSet<WallObject> _clipboard;
+    private string _clipboardPlayerPrefsPrefix = "OhShapeClipboard";
+
+    public float zoom
+    {
+        get
+        {
+            return _zoom;
+        }
+    }
 
     #endregion
 
@@ -104,12 +116,29 @@ public class OhShapeEditor : MonoBehaviour
             _audioManager = value;
         }
     }
+    
+    public float TimeStart {
+        get
+        {
+            float windowStart = _songWalls.anchoredPosition.x / _songWalls.rect.width;
+            return Mathf.Abs(windowStart * ClipInfo.ClipTimeSize);
+        }    
+    }
+    public float TimeEnd
+    {
+        get
+        {
+            float windowEnd = (WaveWalls.rect.width - _songWalls.anchoredPosition.x) / _songWalls.rect.width;
+            return Mathf.Abs(windowEnd * ClipInfo.ClipTimeSize);
+        }
+    } 
 
     #region MonoBehaviour
 
 
     private void Awake()
     {
+        Instance = this;
         _songManager = GetComponent<SongManager>();
         _audioManager = GetComponent<AudioManager>();
         _propertiesManager = GetComponent<PropertiesManager>();
@@ -275,6 +304,20 @@ public class OhShapeEditor : MonoBehaviour
         }
     }
 
+    private void wheelMovement()
+    {
+        if (Input.mouseScrollDelta.y == 0) return;
+
+        zoomMousePosition = Input.mousePosition;
+        OnZoom((int)Input.mouseScrollDelta.y);
+    }
+
+    // Event trigger set in Song Walls.
+    public void WheelMovementDetector()
+    {
+        wheelMovement();
+    }
+    
     private void playPauseClip()
     {
         if (Input.GetKeyUp(KeyCode.Space))
@@ -520,6 +563,8 @@ public class OhShapeEditor : MonoBehaviour
 
         Zoom.text = zoomValue.ToString();
         UpdateZoom(zoomValue);
+
+        //OnZoomEvent?.Invoke();
     }
 
     public void ResetZoom()
@@ -824,7 +869,7 @@ public class OhShapeEditor : MonoBehaviour
         float offset;
         if (!float.TryParse(newOffset, out offset)) return;
 
-        _videoManager.SetVideoOffset(offset);
+        _videoManager.Offset = offset;
         if (_songManager.CurrentSong != null)
         {
             _songManager.CurrentSong.VOffset = offset;
@@ -834,7 +879,7 @@ public class OhShapeEditor : MonoBehaviour
     public void OnAddVideoOffset(float amount)
     {
         _videoManager.AddVideoOffset(amount);
-        float offset = _videoManager.GetVideoOffset();
+        float offset = _videoManager.Offset;
         if (_songManager.CurrentSong != null)
         {
             _songManager.CurrentSong.VOffset = offset;
@@ -862,6 +907,20 @@ public class OhShapeEditor : MonoBehaviour
         RefreshClipScroll();
         moveWallsVerticallyInTheNextFrame();
         // UpdateZoomText();
+        
+        Invoke("SetScrollbar", 0.1f);
+    }
+    
+    private void SetScrollbar()
+    {
+        if (ClipInfo.ClipTimeSize > 0f)
+        {
+            float x = _cursorTime / ClipInfo.ClipTimeSize;
+            SongScrollBar.inertia = false;
+            Scrollbar.value = x;
+            SongScrollBar.inertia = true;
+            RenderWave();
+        }
     }
 
     private void UpdateClipRenderTimes()
@@ -1085,8 +1144,6 @@ public class OhShapeEditor : MonoBehaviour
         int intDuration = Int32.Parse(duration);
         if (intDuration <= 0) return;
         _objectsLibraryManager.UpdateDodgeDuration(intDuration);
-        // _objectsLibraryManager.UpdateUIWallObjectProperties(_objectsLibraryManager.GetDodge().Code);
-        // OnUpdateWallId(_objectsLibraryManager.GetDodge().Code);
         _objectsLibraryManager.UpdateUIWallObjectProperties(_objectsLibraryManager.WallDodge.Id);
         _currentWallObject.ChangeName(_objectsLibraryManager.WallDodge.Id);
     }
@@ -1348,7 +1405,7 @@ public class OhShapeEditor : MonoBehaviour
         _songManager.CurrentSong.AudioTime = ClipInfo.ClipTimeSize;
         if (_songManager.CurrentSong.Video != null)
         {
-            _videoManager.Setup(_songManager.CurrentSong.Video, _songManager.CurrentSong.VOffset);
+            _videoManager.Load(_songManager.CurrentSong.Video, _songManager.CurrentSong.VOffset);
         }
         else
             _videoManager.Close();
@@ -1429,27 +1486,34 @@ public class OhShapeEditor : MonoBehaviour
 
     public void Copy()
     {
-        _clipboard = new HashSet<WallObject>(_selectedWallObjects);
+        SerializableWallObjects selectedSerializableWallObjects = new SerializableWallObjects();
+
+        foreach (var selectedWallObject in _selectedWallObjects)
+        {
+            selectedSerializableWallObjects.serializableWallObjects.Add(new SerializableWallObjects.SerializableWallObject(selectedWallObject.WallObjectId, selectedWallObject.Time));
+        }
+
+        string copiedObjects = JsonUtility.ToJson(selectedSerializableWallObjects);
+
+        PlayerPrefs.SetString(_clipboardPlayerPrefsPrefix, copiedObjects);   
     }
 
 
     public void Flip()
     {
-        _clipboard = new HashSet<WallObject>(_selectedWallObjects);
-        // clearListOfSelectedObject();
-
-        foreach (WallObject wallObject in _clipboard)
+        HashSet<WallObject> clipboard = new HashSet<WallObject>(_selectedWallObjects);
+        
+        foreach (WallObject wallObject in clipboard)
         {
             string flippedId = WallsUtils.FlipWallObject(wallObject.WallObjectId);
-            if (_clipboard.Count == 1)
+            if (clipboard.Count == 1)
             {
                 OnUpdateWallId(flippedId);
             }
 
             wallObject.WallObjectId = flippedId;
+            wallObject.CheckWallId(flippedId);
         }
-
-
     }
 
     public IEnumerator Paste(bool flipped = false) 
@@ -1458,7 +1522,17 @@ public class OhShapeEditor : MonoBehaviour
         clearListOfSelectedObject();
         List<WallObject> wallObjectsToCreate = new List<WallObject>();
 
-        foreach (WallObject wallObject in _clipboard)
+        string copiedObjects = PlayerPrefs.GetString(_clipboardPlayerPrefsPrefix);
+        SerializableWallObjects clipboard = JsonUtility.FromJson<SerializableWallObjects>(copiedObjects);
+
+        foreach (SerializableWallObjects.SerializableWallObject wallObject in clipboard.serializableWallObjects)
+        {
+            if (wallObject.Time < initTime) initTime = wallObject.Time;
+        }
+
+        //new HashSet<WallObject>(_selectedWallObjects);
+
+        foreach (SerializableWallObjects.SerializableWallObject wallObject in clipboard.serializableWallObjects)
         {
             if (wallObject.Time < initTime) initTime = wallObject.Time;
         }
@@ -1482,7 +1556,7 @@ public class OhShapeEditor : MonoBehaviour
             }
         }
 
-        foreach (WallObject wallObject in _clipboard)
+        foreach (SerializableWallObjects.SerializableWallObject wallObject in clipboard.serializableWallObjects)
         {
             float time = _cursorTime + wallObject.Time - initTime;
             if (!pasteWithoutProblems && time > ClipInfo.ClipTimeSize)
@@ -1492,7 +1566,7 @@ public class OhShapeEditor : MonoBehaviour
 
             // time = time > ClipInfo.ClipTimeSize ? ClipInfo.ClipTimeSize : time;
 
-            string newWallObjectID = flipped == true ? WallsUtils.FlipWallObject(wallObject.WallObjectId) : wallObject.WallObjectId;
+            string newWallObjectID = flipped == true ? WallsUtils.FlipWallObject(wallObject.Name) : wallObject.Name;
 
             WallObject currentWallObject = _songManager.CreateWallObject(newWallObjectID, time, true, this);
             addWallObjectToSelectedList(currentWallObject);
@@ -1512,7 +1586,10 @@ public class OhShapeEditor : MonoBehaviour
 
     private bool canPasteWithoutProblems(float initTime)
     {
-        foreach (WallObject wallObject in _clipboard)
+        string copiedObjects = PlayerPrefs.GetString(_clipboardPlayerPrefsPrefix);
+        SerializableWallObjects clipboard = JsonUtility.FromJson<SerializableWallObjects>(copiedObjects);
+
+        foreach (SerializableWallObjects.SerializableWallObject wallObject in clipboard.serializableWallObjects)
         {
             float time = _cursorTime + wallObject.Time - initTime;
             if (time > ClipInfo.ClipTimeSize)
