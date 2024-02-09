@@ -86,6 +86,7 @@ public class OhShapeEditor : MonoBehaviour
     private List<WallObject> _selectedWallObjects;
 
     private string _clipboardPlayerPrefsPrefix = "OhShapeClipboard";
+    private bool _zoomHasBeenMade = false;
 
     public float zoom
     {
@@ -190,6 +191,18 @@ public class OhShapeEditor : MonoBehaviour
             _cursor.anchoredPosition = Vector2.zero;
 
             _propertiesManager.UpdateClipTime(playTime.ToString("F2"));
+        }
+        else
+        {
+            if (_zoomHasBeenMade)
+            {
+                _zoomHasBeenMade = false;
+                if (_waveTimeRange.y < _cursorTime || _waveTimeRange.x > _cursorTime)
+                {
+                    UpdateClipRenderTimes();
+                    StartCoroutine(BarToPosition(_cursorTime));
+                }
+            }
         }
 
         Inputs();
@@ -892,6 +905,7 @@ public class OhShapeEditor : MonoBehaviour
     private void UpdateZoom(float value = 1)
     {
         _zoom = value;
+        _zoomHasBeenMade = true;
 
         _songWalls.anchorMax = new Vector2(_zoom, 1);
 
