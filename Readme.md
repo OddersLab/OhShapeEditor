@@ -72,6 +72,9 @@ And add this line to `Assets/Scripts/Manager/VideoManager.cs`
 
 ## 🔧 Release notes
 
+### 1.0.7
+- Fix time text in Pause
+
 ### 1.0.6
 - Added paste between editors feature
 - Width WA keys update
