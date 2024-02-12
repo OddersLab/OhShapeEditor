@@ -87,6 +87,7 @@ public class OhShapeEditor : MonoBehaviour
 
     private string _clipboardPlayerPrefsPrefix = "OhShapeClipboard";
     private bool _zoomHasBeenMade = false;
+    private bool _updatingMovement = false;
 
     public float zoom
     {
@@ -194,6 +195,8 @@ public class OhShapeEditor : MonoBehaviour
         }
         else
         {
+            _propertiesManager.UpdateClipTime(_cursorTime.ToString("F2"));
+            
             if (_zoomHasBeenMade)
             {
                 _zoomHasBeenMade = false;
@@ -257,7 +260,8 @@ public class OhShapeEditor : MonoBehaviour
     {
         // Right/left arrow provides control of time bar using arrow keys
         // pressing once moves 0.01 seconds, hold for 1 second for multiple increments
-
+        if (_updatingMovement) return;
+        
         float time = 0.01f;
 
         bool left = Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A);
@@ -274,6 +278,9 @@ public class OhShapeEditor : MonoBehaviour
 
         if (left || right)
         {
+            StopCoroutine(WaitForContinue());
+            StartCoroutine(WaitForContinue());
+            
             clearListOfSelectedObject();
             if (_keySingle == true)  // Run only once until 1 second passes, then go ahead and run ...
             {
@@ -315,6 +322,13 @@ public class OhShapeEditor : MonoBehaviour
         {
             _keySingle = true;
         }
+    }
+
+    private IEnumerator WaitForContinue()
+    {
+        _updatingMovement = true;
+        yield return new WaitForSeconds(0.1f);
+        _updatingMovement = false;
     }
 
     private void wheelMovement()
