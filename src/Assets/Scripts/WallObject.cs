@@ -5,6 +5,7 @@ using UnityEngine.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Collections;
+using Utils;
 
 //Manage objects, (walls, coins...) 
 [Serializable]
@@ -151,12 +152,7 @@ public class WallObject : MonoBehaviour
             float max = OhShapeEditor.Instance.TimeEnd;
 
             string[] values = WallObjectId.Split('.', ',');
-            float duration = DEFAULT_WIDTH;
-            switch (id)
-            {
-                case "WA": duration = int.Parse(values[2]) / 100f; break;
-                case "WG": duration = int.Parse(values[6]) / 1000f; break;
-            }
+            float duration = int.Parse(values[2]) / 10f;
 
             float startTime = Time;
             float endTime = startTime + duration;
@@ -165,18 +161,13 @@ public class WallObject : MonoBehaviour
             float endX = Screen.width * t;
             float startX = _rect.position.x;
             Width = endX - startX;
-
-
-            // Adapt to screen size
-            float a = 1630f / 917f;
-            float b = (float)Screen.width / (float)Screen.height;
-            Width *= Increment(a, b, duration);
-            Width *= 1f / Increment(a, b, duration);
-
+            
             // Patch
             float zoom = OhShapeEditor.Instance.zoom;
             Width -= (duration * zoom) - (duration / 10f) - (4f * zoom);
 
+            Width = WidthMapper.GetAnchor(duration, zoom);
+            
             if ((startTime > min && startTime < max) || (endTime > min && endTime < max))
             {
                 if (float.IsNaN(Width)) return;
