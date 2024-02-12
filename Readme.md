@@ -72,6 +72,12 @@ And add this line to `Assets/Scripts/Manager/VideoManager.cs`
 
 ## 🔧 Release notes
 
+### 1.0.8
+- Fix Width of WA walls
+
+### 1.0.7
+- Fix text in pause
+
 ### 1.0.6
 - Added paste between editors feature
 - Width WA keys update
