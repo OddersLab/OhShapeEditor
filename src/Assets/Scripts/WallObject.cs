@@ -151,43 +151,23 @@ public class WallObject : MonoBehaviour
             float max = OhShapeEditor.Instance.TimeEnd;
 
             string[] values = WallObjectId.Split('.', ',');
-            float duration = DEFAULT_WIDTH;
-            switch (id)
-            {
-                case "WA": duration = int.Parse(values[2]) / 100f; break;
-                case "WG": duration = int.Parse(values[6]) / 1000f; break;
-            }
+            float duration = int.Parse(values[2]) / 100f;
 
             float startTime = Time;
             float endTime = startTime + duration;
-
-            float t = Mathf.InverseLerp(min, max, endTime);
-            float endX = Screen.width * t;
-            float startX = _rect.position.x;
-            Width = endX - startX;
-
-
-            // Adapt to screen size
-            float a = 1630f / 917f;
-            float b = (float)Screen.width / (float)Screen.height;
-            Width *= Increment(a, b, duration);
-            Width *= 1f / Increment(a, b, duration);
-
-            // Patch
-            float zoom = OhShapeEditor.Instance.zoom;
-            Width -= (duration * zoom) - (duration / 10f) - (4f * zoom);
-
+            
+            float posInit = ClipInfo.SecToPixel(startTime);
+            float posEnd = ClipInfo.SecToPixel(endTime);
+            
             if ((startTime > min && startTime < max) || (endTime > min && endTime < max))
             {
-                if (float.IsNaN(Width)) return;
-
-                _rect.sizeDelta = new Vector2(Width, _rect.sizeDelta.y);
-                Collider.offset = new Vector2(Width / 2, Collider.offset.y);
-                Collider.size = new Vector2(Width, Collider.size.y);
-                ToggleCollider.size = new Vector2(Width, ToggleCollider.size.y);
+                _rect.anchorMin = new Vector2(posInit, 0.0f);
+                _rect.anchorMax = new Vector2(posEnd, 1.0f);
+                _rect.anchoredPosition = new Vector2(0, 0);
+                _rect.offsetMin = new Vector2(0, 0);
+                _rect.offsetMax = new Vector2(0, 0);
+                _rect.localScale = Vector3.one;
             }
-
-            
         }
         else _rect.sizeDelta = new Vector2(DEFAULT_WIDTH, _rect.sizeDelta.y);
     }
