@@ -150,35 +150,25 @@ public class WallObject : MonoBehaviour
         {
             float min = OhShapeEditor.Instance.TimeStart;
             float max = OhShapeEditor.Instance.TimeEnd;
-
+            
             string[] values = WallObjectId.Split('.', ',');
-            float duration = int.Parse(values[2]) / 10f;
+            float duration = int.Parse(values[2]) / 100f;
 
             float startTime = Time;
             float endTime = startTime + duration;
 
-            float t = Mathf.InverseLerp(min, max, endTime);
-            float endX = Screen.width * t;
-            float startX = _rect.position.x;
-            Width = endX - startX;
-            
-            // Patch
-            float zoom = OhShapeEditor.Instance.zoom;
-            Width -= (duration * zoom) - (duration / 10f) - (4f * zoom);
+            float posInit = ClipInfo.SecToPixel(startTime);
+            float posEnd = ClipInfo.SecToPixel(endTime);
 
-            Width = WidthMapper.GetAnchor(duration, zoom);
-            
             if ((startTime > min && startTime < max) || (endTime > min && endTime < max))
             {
-                if (float.IsNaN(Width)) return;
-
-                _rect.sizeDelta = new Vector2(Width, _rect.sizeDelta.y);
-                Collider.offset = new Vector2(Width / 2, Collider.offset.y);
-                Collider.size = new Vector2(Width, Collider.size.y);
-                ToggleCollider.size = new Vector2(Width, ToggleCollider.size.y);
+                _rect.anchorMin = new Vector2(posInit, 0.0f);
+                _rect.anchorMax = new Vector2(posEnd, 1.0f);
+                _rect.anchoredPosition = new Vector2(0, 0);
+                _rect.offsetMin = new Vector2(0, 0);
+                _rect.offsetMax = new Vector2(0, 0);
+                _rect.localScale = Vector3.one;
             }
-
-            
         }
         else _rect.sizeDelta = new Vector2(DEFAULT_WIDTH, _rect.sizeDelta.y);
     }
@@ -349,10 +339,10 @@ public class WallObject : MonoBehaviour
         trigger.triggers.Add(drag);
     }
 
-    private void SetPosition()
+    private void SetPosition(float customTime = -1f)
     {
         RectTransform rt = GetComponent<RectTransform>();
-        var pos = ClipInfo.SecToPixel(Time);
+        var pos = ClipInfo.SecToPixel((customTime == 1f) ? Time : customTime);
 
         rt.anchorMin = new Vector2(pos, 0.0f);
         rt.anchorMax = new Vector2(pos, 1.0f);
