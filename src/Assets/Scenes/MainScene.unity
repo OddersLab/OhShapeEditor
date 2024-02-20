@@ -386,12 +386,12 @@ Prefab:
     - target: {fileID: 224540965954670956, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.00001335144
       objectReference: {fileID: 0}
     - target: {fileID: 224912219052812520, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000019073486
+      value: 0.00001335144
       objectReference: {fileID: 0}
     - target: {fileID: 224876798830259696, guid: 7afbcdebfe6841549a3af73eeed1f35e,
         type: 2}
@@ -1007,6 +1007,15 @@ Prefab:
         type: 2}
       propertyPath: m_AnchorMin.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345825238875098, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114105122365015998, guid: 7afbcdebfe6841549a3af73eeed1f35e,
+        type: 2}
+      propertyPath: m_Text
+      value: OhShape Editor v1.0.9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7afbcdebfe6841549a3af73eeed1f35e, type: 2}

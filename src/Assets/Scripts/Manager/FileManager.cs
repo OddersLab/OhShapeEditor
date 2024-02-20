@@ -284,19 +284,27 @@ public static class FileManager
         bool state = false;
 
         OpenFileDialog openDialog = new OpenFileDialog();
-
-        //Open in this directory
-        if (filter.Contains(".ogg"))
+        string initDirectory = PlayerPrefs.GetString("Folder");
+        
+        if (string.IsNullOrEmpty(initDirectory))
         {
-            openDialog.InitialDirectory = AudioPath;
-        }
-        else if (filter.Contains(".mp4;*.MOV"))
-        {
-            openDialog.InitialDirectory = VideoPath;
+            //Open in this directory
+            if (filter.Contains(".ogg"))
+            {
+                openDialog.InitialDirectory = AudioPath;
+            }
+            else if (filter.Contains(".mp4;*.MOV"))
+            {
+                openDialog.InitialDirectory = VideoPath;
+            }
+            else
+            {
+                openDialog.InitialDirectory = Path;
+            }
         }
         else
         {
-            openDialog.InitialDirectory = Path;
+            openDialog.InitialDirectory = initDirectory;
         }
 
         openDialog.RestoreDirectory = true;
@@ -310,7 +318,7 @@ public static class FileManager
         if (result == DialogResult.OK)
         {
 			var filePath = openDialog.FileName;
-			// SetPath(System.IO.Path.GetDirectoryName(filePath));
+            // SetPath(System.IO.Path.GetDirectoryName(filePath));
 			var fileName = System.IO.Path.GetFileName(filePath);
 
 			// TODO fix this
@@ -327,7 +335,7 @@ public static class FileManager
 
             //Get the path of specified file
             Debug.Log("File Path:" + filePath);
-
+            PlayerPrefs.SetString("Folder", System.IO.Path.GetDirectoryName(filePath));
             state = true;
         }
 
@@ -355,7 +363,16 @@ public static class FileManager
         saveDialog.DefaultExt = "yml";
         saveDialog.Filter =
             "Text files (*.yml)|*.yml";
-        saveDialog.InitialDirectory = Path;
+        string initDirectory = PlayerPrefs.GetString("Folder");
+
+        if (string.IsNullOrEmpty(initDirectory))
+        {
+            saveDialog.InitialDirectory = Path;
+        }
+        else
+        {
+            saveDialog.InitialDirectory = initDirectory;
+        }
 
         // Call ShowDialog and check for a return value of DialogResult.OK,
         // which indicates that the file was saved. 
@@ -368,6 +385,7 @@ public static class FileManager
             SetPath(System.IO.Path.GetDirectoryName(filePath));
 			FileManager.SetFilename(filePath);
 
+            PlayerPrefs.SetString("Folder", System.IO.Path.GetDirectoryName(filePath));
             state = true;
         }
         return state;
@@ -394,7 +412,16 @@ public static class FileManager
         saveDialog.DefaultExt = "yml";
         saveDialog.Filter =
             "Text files (*.yml)|*.yml";
-        saveDialog.InitialDirectory = Path;
+        string initDirectory = PlayerPrefs.GetString("Folder");
+
+        if (string.IsNullOrEmpty(initDirectory))
+        {
+            saveDialog.InitialDirectory = Path;
+        }
+        else
+        {
+            saveDialog.InitialDirectory = initDirectory;
+        }
 
         // Call ShowDialog and check for a return value of DialogResult.OK,
         // which indicates that the file was saved. 
@@ -408,6 +435,7 @@ public static class FileManager
             FileManager.SetFilename(filePath);
             CreateFile(CurrentFilename);
 
+            PlayerPrefs.SetString("Folder", System.IO.Path.GetDirectoryName(filePath));
             state = true;
         }
         return state;

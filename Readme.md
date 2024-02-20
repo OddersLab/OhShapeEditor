@@ -72,6 +72,9 @@ And add this line to `Assets/Scripts/Manager/VideoManager.cs`
 
 ## 🔧 Release notes
 
+### 1.0.9
+- Fix open dialog folder (last used)
+
 ### 1.0.8
 - Fix Width of WA walls
 
