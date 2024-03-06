@@ -72,6 +72,10 @@ And add this line to `Assets/Scripts/Manager/VideoManager.cs`
 
 ## 🔧 Release notes
 
+### 1.0.10
+- Fix double null
+- Optimization wave
+
 ### 1.0.9
 - Fix open dialog folder (last used)
 

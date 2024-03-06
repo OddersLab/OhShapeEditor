@@ -22,6 +22,7 @@ public class RenderSong : MonoBehaviour
 
     private RectTransform _waveRectTransform;
     private OhShapeEditor _ohShapeEditor;
+    private Image _waveImage;
 
     #endregion
 
@@ -30,7 +31,8 @@ public class RenderSong : MonoBehaviour
     private void Awake()
     {
         _waveRectTransform = GetComponent<RectTransform>();
-        _ohShapeEditor     = FindObjectOfType<OhShapeEditor>();
+        _ohShapeEditor = FindObjectOfType<OhShapeEditor>();
+        _waveImage = GetComponent<Image>();
     }
 
     #endregion
@@ -42,7 +44,7 @@ public class RenderSong : MonoBehaviour
         var windowWidth = (int)_waveRectTransform.rect.width;
         var windowHeight = 100;        
 
-        Log.AddLine("WWidth: " + windowWidth.ToString());
+        //Log.AddLine("WWidth: " + windowWidth.ToString());
         //Log.AddLine("WTime: " + windowRenderTime.ToString("000.000"));
 
         if (!ClipInfo.Clip) return;
@@ -51,14 +53,14 @@ public class RenderSong : MonoBehaviour
         tex.filterMode = FilterMode.Point;
         tex.wrapMode = TextureWrapMode.Clamp;
 
-        GetComponent<Image>().overrideSprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-        GetComponent<Image>().color = Color.white;
+        _waveImage.overrideSprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+        _waveImage.color = Color.white;
     }
 
     public void ClearWaveImage()
     {
-        GetComponent<Image>().overrideSprite = null;
-        GetComponent<Image>().color = new Color(.2f, .2f, .2f);
+        _waveImage.overrideSprite = null;
+        _waveImage.color = new Color(.2f, .2f, .2f);
     }
 
     public void MakeLevelBuffers(float zoom)
@@ -98,7 +100,6 @@ public class RenderSong : MonoBehaviour
             levelDataMin[p] = min;
 
         }
-
     }
 
     #endregion
@@ -107,33 +108,22 @@ public class RenderSong : MonoBehaviour
 
     private Texture2D NewPaintWaveformSpectrum(AudioClip audio, float saturation, int width, int height, Vector2 time)
     {
-
         Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
-
-        //Erase texture
         ClearTexture(ref tex, width, height);
-        int h = height / 2;
 
+        int h = height / 2;
         var sampleStart = SecondToSample(audio, levelDataMax, time.x);
-        //Draw wave
+
+        float max = 0f, min = 0f;
+        
         for (int x = 0; x < width - 1; x++)
         {
+            int index = Mathf.Clamp(Mathf.FloorToInt(x + sampleStart), 0, levelDataMax.Length - 1);
+            max = levelDataMax[index];
+            min = levelDataMin[index];
 
-            float max = 0f;
-            float min = 0f;
-
-            try
-            {
-                max = levelDataMax[Mathf.FloorToInt(x + sampleStart)];
-                min = levelDataMin[Mathf.FloorToInt(x + sampleStart)];
-            }
-            catch
-            {
-
-            }
-
-            var maxY = (int)(max * (float)height * saturation);
-            var minY = (int)(min * (float)height * saturation);
+            int maxY = Mathf.FloorToInt(max * height * saturation);
+            int minY = Mathf.FloorToInt(min * height * saturation);
 
             DrawLine(tex, x, h + maxY, x, h + minY, WaveColorD, WaveColorU);
         }
@@ -144,11 +134,12 @@ public class RenderSong : MonoBehaviour
 
     private void ClearTexture(ref Texture2D tex, int width, int height)
     {
-        if (clearBrush.Length != tex.GetPixels().Length)
+        int totalPixels = width * height;
+    
+        if (clearBrush == null || clearBrush.Length != totalPixels)
         {
-            var i2 = width * height;
-            clearBrush = new Color[i2];
-            for (int i = 0; i < i2; i++)
+            clearBrush = new Color[totalPixels];
+            for (int i = 0; i < totalPixels; i++)
             {
                 clearBrush[i] = Color.clear;
             }
@@ -170,62 +161,35 @@ public class RenderSong : MonoBehaviour
 
     private int SecondToSample(AudioClip audio, float[] samples, float second)
     {
-        var rate = ((samples.Length / audio.channels) / audio.length);
-        return (int)(second * rate * audio.channels);
+        var rate = samples.Length / audio.length;
+        return (int)(second * rate);
     }
 
     private void DrawLine(Texture2D tex, int x0, int y0, int x1, int y1, Color colA, Color colB)
     {
-        int dy = (int)(y1 - y0);
-        int dx = (int)(x1 - x0);
-        int stepx, stepy;
+        int dx = Mathf.Abs(x1 - x0);
+        int dy = Mathf.Abs(y1 - y0);
+        int sx = x0 < x1 ? 1 : -1;
+        int sy = y0 < y1 ? 1 : -1;
+        int err = dx - dy;
 
-        if (dy < 0) { dy = -dy; stepy = -1; }
-        else { stepy = 1; }
-        if (dx < 0) { dx = -dx; stepx = -1; }
-        else { stepx = 1; }
-        dy <<= 1;
-        dx <<= 1;
-
-        float fraction = 0;
-        tex.SetPixel(x0, y0, colA);
-
-        if (dx > dy)
+        while (x0 != x1 || y0 != y1)
         {
-            fraction = dy - (dx >> 1);
-            while (Mathf.Abs(x0 - x1) > 1)
+            float lerp1 = Mathf.Abs(err) / Mathf.Sqrt(dx * dx + dy * dy);
+            float lerp2 = Mathf.Abs(dx - err) / Mathf.Sqrt(dx * dx + dy * dy);
+            Color col = Color.Lerp(colA, colB, lerp1 * lerp2);
+            tex.SetPixel(x0, y0, col);
+
+            int err2 = 2 * err;
+            if (err2 > -dy)
             {
-                if (fraction >= 0)    
-                {
-                    y0 += stepy;
-                    fraction -= dx;
-                }
-                x0 += stepx;
-                fraction += dy;
-
-
-
-                tex.SetPixel(x0, y0, colA);
+                err -= dy;
+                x0 += sx;
             }
-        }
-        else
-        {
-            fraction = dx - (dy >> 1);
-            while (Mathf.Abs(y0 - y1) > 1)
+            if (err2 < dx)
             {
-                if (fraction >= 0)
-                {
-                    x0 += stepx;
-                    fraction -= dy;
-                }
-                y0 += stepy;
-                fraction += dx;
-
-                var lerp1 = Mathf.Abs(fraction * 0.01f);
-                var lerp2 = Mathf.Abs((y0 - y1) * 0.01f);
-                var col = Color.Lerp(colA, colB, lerp2 * lerp1);
-
-                tex.SetPixel(x0, y0, col);
+                err += dx;
+                y0 += sy;
             }
         }
     }
