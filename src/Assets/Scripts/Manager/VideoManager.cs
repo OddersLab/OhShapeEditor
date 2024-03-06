@@ -150,8 +150,15 @@ public class VideoManager : MonoBehaviour
 	public float GetVideoURLTime()
 	{
 		double time = VideoPlayer.frameCount / VideoPlayer.frameRate;
-		TimeSpan videoUrlLength = TimeSpan.FromSeconds(time);
-		return videoUrlLength.Seconds;
+		if (double.IsNaN(time))
+		{
+			return float.MinValue;
+		}
+		else
+		{
+			TimeSpan videoUrlLength = TimeSpan.FromSeconds(time);
+			return videoUrlLength.Seconds;	
+		}
 	}
 
 	public void ShowVideoManager(bool show)
